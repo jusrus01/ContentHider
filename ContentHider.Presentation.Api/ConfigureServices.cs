@@ -54,17 +54,20 @@ public static class ConfigureServices
     
     public static void ConfigureOrganizationEndPoints(this IEndpointRouteBuilder app)
     {
-        IResult Execute(CreateOrgDto org)
+        async Task<IResult> ExecuteAsync(CreateOrgDto org, DelayedFunction executor)
         {
-            return new DelayedFunction(org)
+            var result = await executor
+                .Begin(org)   
                 .Validate<CreateOrgDto>(dto => !string.IsNullOrWhiteSpace(dto.Title))
                 .Validate<CreateOrgDto>(dto => !string.IsNullOrWhiteSpace(dto.Description))
                 .Map<CreateOrgDto, OrganizationDao>(dto => new OrganizationDao { Name = dto.Title })
                 .ExecuteAsync<OrganizationDao>()
-                .FromResult();
+                .ConfigureAwait(false);
+            
+            return result.FromResult();
         }
 
-        app.MapPost(OrganizationRoute, Execute);
+        app.MapPost(OrganizationRoute, ExecuteAsync);
     }
 
     private static IResult FromResult(this bool result)

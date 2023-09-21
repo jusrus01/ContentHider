@@ -9,10 +9,10 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly HiderDbContext _context;
 
-    public UnitOfWork(HiderDbContext context)
-    {
-        _context = context;
-    }
+    // public UnitOfWork(HiderDbContext context)
+    // {
+    //     _context = context;
+    // }
     
     public Task<List<T>> GetAsync<T>(Expression<Func<T, bool>> selector) where T : Dao
     {

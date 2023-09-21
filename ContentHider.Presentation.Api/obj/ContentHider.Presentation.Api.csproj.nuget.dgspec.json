@@ -59,6 +59,71 @@
         }
       }
     },
+    "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.DAL\\ContentHider.DAL.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.DAL\\ContentHider.DAL.csproj",
+        "projectName": "ContentHider.DAL",
+        "projectPath": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.DAL\\ContentHider.DAL.csproj",
+        "packagesPath": "C:\\Users\\jjust\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.DAL\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\jjust\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Core\\ContentHider.Core.csproj": {
+                "projectPath": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Core\\ContentHider.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Domain\\ContentHider.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -144,6 +209,9 @@
             "projectReferences": {
               "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Core\\ContentHider.Core.csproj": {
                 "projectPath": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Core\\ContentHider.Core.csproj"
+              },
+              "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.DAL\\ContentHider.DAL.csproj": {
+                "projectPath": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.DAL\\ContentHider.DAL.csproj"
               },
               "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Domain\\ContentHider.Domain.csproj": {
                 "projectPath": "C:\\Users\\jjust\\Documents\\ContentHider\\ContentHider.Domain\\ContentHider.Domain.csproj"

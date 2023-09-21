@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+using ContentHider.Core.Repositories;
 
 namespace ContentHider.Domain;
 
@@ -6,22 +6,29 @@ public class DelayedFunction
 {
     private protected class DelayedFunctionNode
     {
-        public Func<object, object> F { get; set; }
+        public Func<object, Task<object>> F { get; set; }
     }
     
     private protected DelayedFunction Next { get; private set; }
     private protected DelayedFunction Head { get; private set; }
 
 
-    private readonly object _obj;
+    private object _obj;
     private protected readonly DelayedFunctionNode FunctionNode;
+    
+    private readonly IUnitOfWork _uow;
 
-    public DelayedFunction(object obj)
+    public DelayedFunction(IUnitOfWork uow)
     {
-        _obj = obj;
-        
-        Head = this;
+        _uow = uow;
     }
+    
+    // public DelayedFunction(object obj)
+    // {
+    //     _obj = obj;
+    //     
+    //     Head = this;
+    // }
     
     private DelayedFunction(DelayedFunction head, DelayedFunctionNode functionNode)
     {
@@ -29,7 +36,16 @@ public class DelayedFunction
         FunctionNode = functionNode;
     }
 
-    public TResult ExecuteAsync<TResult>()
+    public DelayedFunction Begin(object obj)
+    {
+        _obj = obj;
+        
+        Head = this;
+
+        return this;
+    }
+    
+    public async Task<TResult> ExecuteAsync<TResult>()
     {
         var current = Head;
         var arg = Head._obj;
@@ -42,7 +58,7 @@ public class DelayedFunction
                 continue;
             }
             
-            var result = current.FunctionNode.F(arg);
+            var result = await current.FunctionNode.F(arg).ConfigureAwait(false);
             
             current = current.Next;
             arg = result;
@@ -57,7 +73,7 @@ public class DelayedFunction
         {
             F = requestObject =>
             {
-                return mapFunc((TFrom)requestObject);
+                return Task.FromResult<object>(mapFunc((TFrom)requestObject));
             }
         };
         
@@ -77,7 +93,7 @@ public class DelayedFunction
                     throw new Exception();
                 }
 
-                return requestObject;
+                return Task.FromResult(requestObject);
             }
         };
         

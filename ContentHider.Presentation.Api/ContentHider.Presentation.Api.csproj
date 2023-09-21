@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ContentHider.Core\ContentHider.Core.csproj" />
+      <ProjectReference Include="..\ContentHider.DAL\ContentHider.DAL.csproj" />
       <ProjectReference Include="..\ContentHider.Domain\ContentHider.Domain.csproj" />
     </ItemGroup>
 

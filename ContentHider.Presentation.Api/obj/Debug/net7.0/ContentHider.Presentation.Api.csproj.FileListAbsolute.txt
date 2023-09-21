@@ -35,3 +35,7 @@ C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\ne
 C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\ContentHider.Domain.dll
 C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\ContentHider.Core.pdb
 C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\ContentHider.Domain.pdb
+C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\ContentHider.DAL.dll
+C:\Users\jjust\Documents\ContentHider\ContentHider.Presentation.Api\bin\Debug\net7.0\ContentHider.DAL.pdb
