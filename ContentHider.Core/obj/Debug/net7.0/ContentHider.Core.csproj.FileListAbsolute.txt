@@ -1,0 +1,12 @@
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\bin\Debug\net7.0\ContentHider.Core.deps.json
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\bin\Debug\net7.0\ContentHider.Core.dll
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\bin\Debug\net7.0\ContentHider.Core.pdb
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.csproj.AssemblyReference.cache
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.AssemblyInfoInputs.cache
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.AssemblyInfo.cs
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.csproj.CoreCompileInputs.cache
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.dll
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\refint\ContentHider.Core.dll
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ContentHider.Core.pdb
+C:\Users\jjust\Documents\ContentHider\ContentHider.Core\obj\Debug\net7.0\ref\ContentHider.Core.dll

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHider.Presentation.Api", "ContentHider.Presentation.Api\ContentHider.Presentation.Api.csproj", "{A61B9214-3507-4344-8DE7-77E42394CC14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHider.Core", "ContentHider.Core\ContentHider.Core.csproj", "{DA141171-2CB2-40BE-8D06-BF67B2036B66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHider.DAL", "ContentHider.DAL\ContentHider.DAL.csproj", "{7A57A881-0C53-466B-90D9-E6589BF3BBCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentHider.Domain", "ContentHider.Domain\ContentHider.Domain.csproj", "{48AE9FEB-80D3-49D7-81DE-E092AFCDC199}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A61B9214-3507-4344-8DE7-77E42394CC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A61B9214-3507-4344-8DE7-77E42394CC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A61B9214-3507-4344-8DE7-77E42394CC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A61B9214-3507-4344-8DE7-77E42394CC14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA141171-2CB2-40BE-8D06-BF67B2036B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA141171-2CB2-40BE-8D06-BF67B2036B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA141171-2CB2-40BE-8D06-BF67B2036B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA141171-2CB2-40BE-8D06-BF67B2036B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A57A881-0C53-466B-90D9-E6589BF3BBCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A57A881-0C53-466B-90D9-E6589BF3BBCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A57A881-0C53-466B-90D9-E6589BF3BBCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A57A881-0C53-466B-90D9-E6589BF3BBCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48AE9FEB-80D3-49D7-81DE-E092AFCDC199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48AE9FEB-80D3-49D7-81DE-E092AFCDC199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48AE9FEB-80D3-49D7-81DE-E092AFCDC199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48AE9FEB-80D3-49D7-81DE-E092AFCDC199}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

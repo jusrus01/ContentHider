@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "LjDUY60rQFBpwQsJgNUdpF2GmlIK6XkHX27I5nDQYxM=",
+  "Source": "ContentHider.Presentation.Api",
+  "BasePath": "_content/ContentHider.Presentation.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
