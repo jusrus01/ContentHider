@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ContentHider.Core.Dtos;
 using ContentHider.Core.Entities;
 using ContentHider.Core.Exceptions;
+using ContentHider.Core.Services;
 using ContentHider.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -65,7 +66,7 @@ public static class ConfigureServices
                 .Begin(org)   
                 .Validate<CreateOrgDto>(dto => !string.IsNullOrWhiteSpace(dto.Title))
                 .Validate<CreateOrgDto>(dto => !string.IsNullOrWhiteSpace(dto.Description))
-                .Map<CreateOrgDto, OrganizationDao>(dto => new OrganizationDao { Name = dto.Title })
+                .Map<CreateOrgDto, OrganizationDao>(dto => new OrganizationDao { Title = dto.Title })
                 .ExecuteAsync<OrganizationDao>()
                 .ConfigureAwait(false);
             
@@ -73,6 +74,10 @@ public static class ConfigureServices
         }
 
         app.MapPost(OrganizationRoute, ExecuteAsync);
+
+        app.MapPost($"{OrganizationRoute}/create",
+            async (CreateOrgDto org, CancellationToken token, IOrganizationService orgService)
+                => Results.Ok(await orgService.CreateAsync(org, token).ConfigureAwait(false)));
     }
 
     private static IResult FromResult(this bool result)

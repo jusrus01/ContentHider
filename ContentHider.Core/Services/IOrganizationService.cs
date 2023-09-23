@@ -1,12 +1,8 @@
-using System;
-using System.Threading.Tasks;
-using ContentHider.Core.Entities;
+using ContentHider.Core.Dtos;
 
 namespace ContentHider.Core.Services;
 
 public interface IOrganizationService
 {
-    OrganizationDao Create(Guid userId);
-
-    Task SaveAsync(OrganizationDao dao);
+    Task<OrgDto> CreateAsync(CreateOrgDto dto, CancellationToken token);
 }

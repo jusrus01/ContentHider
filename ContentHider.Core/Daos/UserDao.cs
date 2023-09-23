@@ -1,3 +1,5 @@
+using ContentHider.Core.Daos;
+
 namespace ContentHider.Core.Entities;
 
 public class UserDao : Dao

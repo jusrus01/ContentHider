@@ -1,4 +1,5 @@
 using ContentHider.Core.Repositories;
+using ContentHider.Core.Services;
 using ContentHider.DAL;
 using ContentHider.Domain;
 using ContentHider.Presentation.Api;
@@ -21,6 +22,7 @@ builder.Services
             throw new InvalidOperationException("No connection string set")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<DelayedFunction>();
 
 // builder.Services.AddSwaggerGen();

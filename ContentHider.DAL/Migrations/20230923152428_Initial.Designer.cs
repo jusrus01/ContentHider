@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContentHider.DAL.Migrations
 {
     [DbContext(typeof(HiderDbContext))]
-    [Migration("20230923144537_Initial")]
+    [Migration("20230923152428_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -28,11 +28,14 @@ namespace ContentHider.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Description")
                         .HasColumnType("longtext");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

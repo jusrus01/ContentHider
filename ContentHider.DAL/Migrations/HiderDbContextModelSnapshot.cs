@@ -25,11 +25,14 @@ namespace ContentHider.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Description")
                         .HasColumnType("longtext");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

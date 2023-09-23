@@ -19,7 +19,8 @@ namespace ContentHider.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: true),
+                    Title = table.Column<string>(type: "longtext", nullable: true),
+                    Description = table.Column<string>(type: "longtext", nullable: true),
                     OwnerId = table.Column<Guid>(type: "char(36)", nullable: false)
                 },
                 constraints: table =>
