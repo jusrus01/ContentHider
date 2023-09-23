@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using ContentHider.Core.Entities;
 using ContentHider.Core.Repositories;
 using Microsoft.EntityFrameworkCore;

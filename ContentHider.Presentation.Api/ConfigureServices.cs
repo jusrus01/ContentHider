@@ -1,7 +1,12 @@
+using System;
+using System.Threading.Tasks;
 using ContentHider.Core.Dtos;
 using ContentHider.Core.Entities;
 using ContentHider.Core.Exceptions;
 using ContentHider.Domain;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace ContentHider.Presentation.Api;
 

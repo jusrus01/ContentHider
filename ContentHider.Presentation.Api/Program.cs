@@ -2,12 +2,23 @@ using ContentHider.Core.Repositories;
 using ContentHider.DAL;
 using ContentHider.Domain;
 using ContentHider.Presentation.Api;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+const string connectionString = "Default";
 
 // RULES:
 // Only pure functions
 // Chain until execution
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddDbContext<HiderDbContext>(options =>
+        options.UseMySQL(
+            builder.Configuration.GetConnectionString(connectionString) ??
+            throw new InvalidOperationException("No connection string set")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<DelayedFunction>();

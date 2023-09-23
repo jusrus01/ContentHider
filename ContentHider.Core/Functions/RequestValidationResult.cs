@@ -1,3 +1,5 @@
+using System;
+
 namespace ContentHider.Core.Functions;
 
 public class RequestValidationResult<T> where T : class

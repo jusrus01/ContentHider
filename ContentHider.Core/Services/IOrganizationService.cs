@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using ContentHider.Core.Entities;
 
 namespace ContentHider.Core.Services;

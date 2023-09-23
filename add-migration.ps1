@@ -1,0 +1,1 @@
+dotnet ef migrations add $args[0] --project .\ContentHider.DAL\ --startup-project .\ContentHider.Presentation.Api\

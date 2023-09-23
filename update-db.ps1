@@ -1,0 +1,1 @@
+dotnet ef database update --project .\ContentHider.DAL\ --startup-project .\ContentHider.Presentation.Api\
