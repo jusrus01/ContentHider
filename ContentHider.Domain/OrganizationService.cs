@@ -7,18 +7,18 @@ using ContentHider.Core.Services;
 namespace ContentHider.Domain;
 
 public class OrganizationService : IOrganizationService
-{ 
+{
     private readonly IUnitOfWork _uow;
 
     public OrganizationService(IUnitOfWork uow)
     {
         _uow = uow;
     }
-    
+
     public async Task<OrgDto> CreateAsync(CreateOrgDto dto, CancellationToken token)
     {
         EnsureValidCreateArgs(dto);
-        
+
         var orgs = await _uow
             .GetAsync<OrganizationDao>(o => o.Title == dto.Title, token)
             .ConfigureAwait(false);
@@ -28,8 +28,8 @@ public class OrganizationService : IOrganizationService
         {
             Description = dto.Description,
             Title = dto.Title,
-            Id = Guid.NewGuid(),
-            OwnerId = Guid.NewGuid()
+            Id = Guid.NewGuid().ToString(),
+            OwnerId = Guid.NewGuid().ToString()
         };
 
         await _uow.SaveAsync(newOrg, token).ConfigureAwait(false);

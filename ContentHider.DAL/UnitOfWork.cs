@@ -13,8 +13,9 @@ public class UnitOfWork : IUnitOfWork
     {
         _context = context;
     }
-    
-    public Task<List<T>> GetAsync<T>(Expression<Func<T, bool>> selector, CancellationToken token) where T : Dao
+
+    public Task<List<T>> GetAsync<T>(Expression<Func<T, bool>> selector, CancellationToken token = default)
+        where T : Dao
     {
         return _context.Set<T>()
             .Where(selector)

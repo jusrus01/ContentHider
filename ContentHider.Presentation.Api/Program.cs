@@ -3,13 +3,15 @@ using ContentHider.Core.Services;
 using ContentHider.DAL;
 using ContentHider.Domain;
 using ContentHider.Presentation.Api;
-using Microsoft.AspNetCore.Builder;
+using ContentHider.Presentation.Api.Middlewares;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 const string connectionString = "Default";
 
-// RULES:
+// no behaviour with users
+// simple crud
+
+// RULES: 
 // Only pure functions
 // Chain until execution
 
@@ -23,14 +25,13 @@ builder.Services
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-builder.Services.AddScoped<DelayedFunction>();
 
 // builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // app.UseHttpsRedirection();
-// app.UseAuthorization();
 app.ConfigureExceptionHandler();
+app.UseMiddleware<SimpleAuthenticationMiddleware>();
 app.ConfigureOrganizationEndPoints();
 
 app.Run();
