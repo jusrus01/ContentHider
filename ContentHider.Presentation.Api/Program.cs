@@ -17,6 +17,9 @@ const string connectionString = "Default";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ICallerAccessor, CallerAccessor>();
+
 builder.Services
     .AddDbContext<HiderDbContext>(options =>
         options.UseMySQL(

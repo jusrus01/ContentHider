@@ -3,6 +3,7 @@ using ContentHider.Core.Entities;
 using ContentHider.Core.Enums;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Repositories;
+using ContentHider.Core.Services;
 
 namespace ContentHider.Presentation.Api.Middlewares;
 
@@ -16,13 +17,9 @@ public class SimpleAuthenticationMiddleware
     }
 
     // ReSharper disable once UnusedMember.Global
-    public async Task InvokeAsync(HttpContext context, IUnitOfWork uow)
+    public async Task InvokeAsync(HttpContext context, ICallerAccessor callerAccessor, IUnitOfWork uow)
     {
-        if (!context.Request.Headers.TryGetValue("User-Id", out var userId))
-        {
-            throw new HttpException(null, "No user associated with the request", HttpStatusCode.Forbidden);
-        }
-
+        var userId = callerAccessor.UserId;
         var user = (await uow.GetAsync<UserDao>(i => i.Id == userId, context.RequestAborted)
             ).SingleOrDefault();
         if (user == null)

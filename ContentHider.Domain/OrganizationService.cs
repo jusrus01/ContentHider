@@ -24,6 +24,7 @@ public class OrganizationService : IOrganizationService
             .ConfigureAwait(false);
         EnsureEmpty(orgs);
 
+        // TODO: assign current user id
         var newOrg = new OrganizationDao
         {
             Description = dto.Description,
