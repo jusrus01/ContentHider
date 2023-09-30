@@ -1,3 +1,4 @@
+using ContentHider.Core.Daos;
 using ContentHider.Core.Entities;
 using ContentHider.Core.Enums;
 using Microsoft.EntityFrameworkCore;

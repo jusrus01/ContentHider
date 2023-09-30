@@ -14,17 +14,29 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    public Task<List<T>> GetAsync<T>(Expression<Func<T, bool>> selector, CancellationToken token = default)
+    public Task<List<T>> GetAsync<T>(Expression<Func<T, bool>>? selector = null, CancellationToken token = default)
         where T : Dao
     {
         return _context.Set<T>()
-            .Where(selector)
+            .Where(selector ?? (_ => true))
             .ToListAsync(token);
     }
 
     public async Task SaveAsync<T>(T obj, CancellationToken token) where T : Dao
     {
         await _context.AddAsync(obj, token);
+        await _context.SaveChangesAsync(token);
+    }
+
+    public async Task UpdateAsync<T>(T obj, CancellationToken token) where T : Dao
+    {
+        _context.Update(obj);
+        await _context.SaveChangesAsync(token);
+    }
+
+    public async Task DeleteAsync<T>(T obj, CancellationToken token) where T : Dao
+    {
+        _context.Remove(obj);
         await _context.SaveChangesAsync(token);
     }
 }

@@ -51,7 +51,23 @@ public static class ConfigureServices
     public static void ConfigureOrganizationEndPoints(this IEndpointRouteBuilder app)
     {
         app.MapPost(Constants.Routes.OrganizationRoute,
-            async (CreateOrgDto org, CancellationToken token, IOrganizationService orgService)
-                => Results.Ok(await orgService.CreateAsync(org, token).ConfigureAwait(false)));
+            async (CreateOrgDto org, CancellationToken token, IOrganizationService orgService) =>
+                Results.Ok(await orgService.CreateAsync(org, token).ConfigureAwait(false)));
+
+        app.MapGet(Constants.Routes.OrganizationRoute,
+            async (CancellationToken token, IOrganizationService orgService)
+                => Results.Ok(await orgService.GetAllAsync(token).ConfigureAwait(false)));
+
+        app.MapGet($"{Constants.Routes.OrganizationRoute}/{{id}}",
+            async (string id, CancellationToken token, IOrganizationService orgService)
+                => Results.Ok(await orgService.GetByIdAsync(id, token).ConfigureAwait(false)));
+
+        app.MapDelete($"{Constants.Routes.OrganizationRoute}/{{id}}",
+            async (string id, CancellationToken token, IOrganizationService orgService)
+                => Results.Ok(await orgService.DeleteAsync(id, token).ConfigureAwait(false)));
+
+        app.MapPut($"{Constants.Routes.OrganizationRoute}/{{id}}",
+            async (string id, UpdateOrgDto org, CancellationToken token, IOrganizationService orgService)
+                => Results.Ok(await orgService.UpdateAsync(id, org, token).ConfigureAwait(false)));
     }
 }
