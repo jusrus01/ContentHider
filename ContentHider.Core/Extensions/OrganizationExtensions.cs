@@ -25,7 +25,7 @@ public static class OrganizationExtensions
     {
         ArgumentNullException.ThrowIfNull(org.Formats);
 
-        if (org.Formats.Any(assignedFormat => assignedFormat.Id == format.Id))
+        if (org.Formats.Any(assignedFormat => assignedFormat.Id == format.Id || assignedFormat.Title == format.Title))
         {
             throw new InvalidInputHttpException(null, $"Format for '{org.Id}' org already exists");
         }

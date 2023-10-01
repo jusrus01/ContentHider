@@ -26,7 +26,7 @@ public class FormatService : IFormatService
         EnsureValidArgs(createDto);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
