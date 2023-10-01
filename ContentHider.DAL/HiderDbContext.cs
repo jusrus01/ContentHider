@@ -15,12 +15,21 @@ public class HiderDbContext : DbContext
 
     public DbSet<OrganizationDao> Organizations { get; set; }
     public DbSet<UserDao> Users { get; set; }
+    public DbSet<FormatDao> Formats { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<OrganizationDao>(e => e.HasKey(i => i.Id));
+        modelBuilder.Entity<OrganizationDao>(e =>
+        {
+            e.HasKey(i => i.Id);
+            e
+                .HasMany(i => i.Formats)
+                .WithOne(i => i.Organization)
+                .HasForeignKey(i => i.OrganizationId);
+        });
+        modelBuilder.Entity<FormatDao>(e => e.HasKey(i => i.Id));
         modelBuilder.Entity<UserDao>(e =>
         {
             e.HasKey(i => i.Id);

@@ -1,11 +1,16 @@
 using ContentHider.Core.Daos;
 using ContentHider.Core.Dtos;
 using ContentHider.Core.Exceptions;
+using ContentHider.Core.Extensions;
 using ContentHider.Core.Repositories;
 using ContentHider.Core.Services;
 
 namespace ContentHider.Domain;
 
+/// <summary>
+///     Logic operates under the assumption that the administrator will be able to do modifications.
+///     If that changes, will need to update validation
+/// </summary>
 public class OrganizationService : IOrganizationService
 {
     private readonly ICallerAccessor _callerAccessor;
@@ -22,9 +27,9 @@ public class OrganizationService : IOrganizationService
         EnsureValidArgs(dto.Title, dto.Description);
 
         var orgs = await _uow
-            .GetAsync<OrganizationDao>(o => o.Title == dto.Title, token)
+            .GetAsync(selector: SearchPatterns.Org.SearchOrgByTitle(dto), token: token)
             .ConfigureAwait(false);
-        EnsureEmpty(orgs);
+        orgs.EnsureEmpty();
 
         var newOrg = new OrganizationDao
         {
@@ -45,11 +50,11 @@ public class OrganizationService : IOrganizationService
         EnsureValidArgs(dto.Title, dto.Description);
 
         var orgs = await _uow
-            .GetAsync<OrganizationDao>(o => o.Id == id, token)
+            .GetAsync(selector: SearchPatterns.Org.SelectOrgById(id), token: token)
             .ConfigureAwait(false);
 
+        orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
-        EnsureOrgFound(org);
 
         org!.Description = dto.Description;
         org.Title = dto.Title;
@@ -64,11 +69,11 @@ public class OrganizationService : IOrganizationService
     {
         EnsureValidId(id);
         var orgs = await _uow
-            .GetAsync<OrganizationDao>(o => o.Id == id, token)
+            .GetAsync(selector: SearchPatterns.Org.SelectOrgById(id), token: token)
             .ConfigureAwait(false);
 
+        orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
-        EnsureOrgFound(org);
 
         var dto = ToDto(org);
 #pragma warning disable CS8631
@@ -89,11 +94,11 @@ public class OrganizationService : IOrganizationService
     {
         EnsureValidId(id);
         var orgs = await _uow
-            .GetAsync<OrganizationDao>(o => o.Id == id, token)
+            .GetAsync(selector: SearchPatterns.Org.SelectOrgById(id), token: token)
             .ConfigureAwait(false);
 
+        orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
-        EnsureOrgFound(org);
 
         return ToDto(org);
     }
@@ -106,14 +111,6 @@ public class OrganizationService : IOrganizationService
         ArgumentNullException.ThrowIfNull(org.Id);
 
         return new OrgDto(org.Id, org.Title, org.Description);
-    }
-
-    private static void EnsureEmpty(List<OrganizationDao> orgs)
-    {
-        if (orgs.Any())
-        {
-            throw new InvalidInputHttpException(null, "Org already exists");
-        }
     }
 
     private static void EnsureValidArgs(string title, string description)
@@ -133,14 +130,6 @@ public class OrganizationService : IOrganizationService
         if (string.IsNullOrWhiteSpace(id))
         {
             throw new InvalidInputHttpException(null, "Invalid id");
-        }
-    }
-
-    private static void EnsureOrgFound(OrganizationDao? org)
-    {
-        if (org == null)
-        {
-            throw new InvalidInputHttpException(null, "Org not found");
         }
     }
 }

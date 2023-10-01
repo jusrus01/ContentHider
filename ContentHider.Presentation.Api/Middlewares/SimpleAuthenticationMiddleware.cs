@@ -20,7 +20,7 @@ public class SimpleAuthenticationMiddleware
     public async Task InvokeAsync(HttpContext context, ICallerAccessor callerAccessor, IUnitOfWork uow)
     {
         var userId = callerAccessor.UserId;
-        var user = (await uow.GetAsync<UserDao>(i => i.Id == userId, context.RequestAborted)
+        var user = (await uow.GetAsync<UserDao>(selector: i => i.Id == userId, token: context.RequestAborted)
             ).SingleOrDefault();
         if (user == null)
         {

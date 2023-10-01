@@ -28,6 +28,7 @@ builder.Services
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+builder.Services.AddScoped<IFormatService, FormatService>();
 
 // builder.Services.AddSwaggerGen();
 var app = builder.Build();
@@ -35,6 +36,9 @@ var app = builder.Build();
 // app.UseHttpsRedirection();
 app.ConfigureExceptionHandler();
 app.UseMiddleware<SimpleAuthenticationMiddleware>();
+
 app.ConfigureOrganizationEndPoints();
+app.ConfigureTextFormatEndPoints();
+app.ConfigureRulesEndPoints();
 
 app.Run();

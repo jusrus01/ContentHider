@@ -1,4 +1,5 @@
 using ContentHider.Core.Dtos;
+using ContentHider.Core.Dtos.Formats;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Services;
 
@@ -69,5 +70,16 @@ public static class ConfigureServices
         app.MapPut($"{Constants.Routes.OrganizationRoute}/{{id}}",
             async (string id, UpdateOrgDto org, CancellationToken token, IOrganizationService orgService)
                 => Results.Ok(await orgService.UpdateAsync(id, org, token).ConfigureAwait(false)));
+    }
+
+    public static void ConfigureTextFormatEndPoints(this IEndpointRouteBuilder app)
+    {
+        app.MapPost(Constants.Routes.TextFormatRoute,
+            async (string id, OrgCreateFormatDto format, CancellationToken token, IFormatService formatService) =>
+                Results.Ok(await formatService.CreateAsync(id, format, token).ConfigureAwait(false)));
+    }
+
+    public static void ConfigureRulesEndPoints(this IEndpointRouteBuilder app)
+    {
     }
 }
