@@ -77,6 +77,15 @@ public static class ConfigureServices
         app.MapPost(Constants.Routes.TextFormatRoute,
             async (string orgId, OrgCreateFormatDto format, CancellationToken token, IFormatService formatService) =>
                 Results.Ok(await formatService.CreateAsync(orgId, format, token).ConfigureAwait(false)));
+
+        app.MapPut($"{Constants.Routes.TextFormatRoute}/{{id}}",
+            async (
+                    string orgId,
+                    string id,
+                    OrgUpdateFormatDto format,
+                    CancellationToken token,
+                    IFormatService formatService) =>
+                Results.Ok(await formatService.UpdateAsync(orgId, id, format, token).ConfigureAwait(false)));
     }
 
     public static void ConfigureRulesEndPoints(this IEndpointRouteBuilder app)
