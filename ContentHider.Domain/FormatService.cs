@@ -157,17 +157,20 @@ public class FormatService : IFormatService
         switch (type)
         {
             case FormatType.Json:
-                EnsureJsonIsParsable(formatDefinition, validationException);
+                EnsureJsonIsParsableAndDependentRulesDoNotBreak(formatDefinition, validationException);
                 break;
             case FormatType.Xml:
-                EnsureXmlIsParsable(formatDefinition, validationException);
+                EnsureXmlIsParsableAndDependentRulesDoNotBreak(formatDefinition, validationException);
                 break;
             default:
                 throw validationException;
         }
     }
 
-    private static void EnsureJsonIsParsable(string formatDefinition, Exception validationException)
+
+    // TODO: update
+    private static void EnsureJsonIsParsableAndDependentRulesDoNotBreak(string formatDefinition,
+        Exception validationException)
     {
         try
         {
@@ -180,7 +183,9 @@ public class FormatService : IFormatService
         }
     }
 
-    private static void EnsureXmlIsParsable(string formatDefinition, Exception validationException)
+    // TODO: update
+    private static void EnsureXmlIsParsableAndDependentRulesDoNotBreak(string formatDefinition,
+        Exception validationException)
     {
         try
         {

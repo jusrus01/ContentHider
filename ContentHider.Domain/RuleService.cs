@@ -1,9 +1,14 @@
+using System.Reflection;
+using System.Text.Json;
+using System.Xml.Linq;
 using ContentHider.Core.Daos;
 using ContentHider.Core.Dtos.Rules;
+using ContentHider.Core.Enums;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Extensions;
 using ContentHider.Core.Repositories;
 using ContentHider.Core.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContentHider.Domain;
 
@@ -25,16 +30,18 @@ public class RuleService : IRuleService
     {
         EnsureValidId(orgId);
         EnsureValidId(formatId);
-        EnsureValidArgs(createDto.Title);
+        EnsureValidArgs(createDto.Title, createDto.AnonymizedField);
 
         var format = await ResolveFormatAsync(orgId, formatId, token);
         EnsureRuleNotCreated(format.Id, format.Rules, createDto);
+        EnsureRuleIsValidForFormatDefinition(format, createDto.AnonymizedField);
 
         var rule = new RuleDao
         {
             Id = Guid.NewGuid().ToString(),
             FormatId = format.Id,
-            Title = createDto.Title
+            Title = createDto.Title,
+            AnonymizedField = createDto.AnonymizedField
         };
 
         await _uow.SaveAsync(rule, token);
@@ -48,15 +55,17 @@ public class RuleService : IRuleService
     {
         EnsureValidId(orgId);
         EnsureValidId(formatId);
-        EnsureValidArgs(updateDto.Title);
+        EnsureValidArgs(updateDto.Title, updateDto.AnonymizedField);
         EnsureValidId(id);
 
         var format = await ResolveFormatAsync(orgId, formatId, token);
         EnsureRuleCreated(format.Id, format.Rules, id);
+        EnsureRuleIsValidForFormatDefinition(format, updateDto.AnonymizedField);
 
         var rule = format.Rules!.Single(rule => rule.Id == id);
 
         rule.Title = updateDto.Title;
+        rule.AnonymizedField = updateDto.AnonymizedField;
 
         await _uow.UpdateAsync(rule, token);
 
@@ -103,6 +112,54 @@ public class RuleService : IRuleService
         return format.Rules!.Select(Mapper.ToDto);
     }
 
+    private static void EnsureRuleIsValidForFormatDefinition(FormatDao format, string anonymizedField)
+    {
+        var definition = format.FormatDefinition ?? throw new ArgumentException();
+        var keyWordPresent = definition.Contains(anonymizedField);
+        if (!keyWordPresent)
+        {
+            throw new InvalidInputHttpException(null,
+                $"Invalid anonymized field. Make sure tag that you want to anonymize exists. Format definition '{definition}'");
+        }
+
+        switch (format.Type)
+        {
+            case FormatType.Json:
+                var obj = JsonSerializer.Deserialize<object>(definition);
+                var fields = obj?.GetType().GetFields();
+                foreach (var field in fields?.ToList() ?? new List<FieldInfo>())
+                {
+                    if (field.Name == anonymizedField)
+                    {
+                        return;
+                    }
+                }
+
+                var properties = obj?.GetType().GetProperties();
+                foreach (var property in properties?.ToList() ?? new List<PropertyInfo>())
+                {
+                    if (property.Name == anonymizedField)
+                    {
+                        return;
+                    }
+                }
+
+                throw new InvalidInputHttpException(null,
+                    $"Invalid anonymized field. Make sure tag that you want to anonymize exists and does not exist as a value in your format definition. Format definition '{definition}'");
+            case FormatType.Xml:
+                var doc = XDocument.Parse(definition);
+                if (doc.Descendants().Select(i => i.Name).All(i => i != anonymizedField))
+                {
+                    throw new InvalidInputHttpException(null,
+                        $"Invalid anonymized field. Make sure tag that you want to anonymize exists and does not exist as a value in your format definition. Format definition '{definition}'");
+                }
+
+                break;
+            default:
+                throw new InvalidOperationException();
+        }
+    }
+
     private static void EnsureRuleCreated(string? formatId, List<RuleDao>? formatRules, string? id)
     {
         ArgumentNullException.ThrowIfNull(formatRules);
@@ -133,10 +190,9 @@ public class RuleService : IRuleService
         }
     }
 
-    private static void EnsureValidArgs(string? title)
+    private static void EnsureValidArgs(params string[]? args)
     {
-        var isValid = !string.IsNullOrWhiteSpace(title);
-
+        var isValid = !args?.Any(string.IsNullOrWhiteSpace) ?? false;
         if (!isValid)
         {
             throw new InvalidInputHttpException(null, "Invalid input");
@@ -146,8 +202,8 @@ public class RuleService : IRuleService
     private async Task<FormatDao> ResolveFormatAsync(string orgId, string formatId, CancellationToken token)
     {
         var orgs = await _uow
-            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId),
-                i => i.Formats!.Select(format => format.Rules), token)
+            .GetAsync(SearchPatterns.Org.SelectOrgById(orgId),
+                i => i.Include(j => j.Formats!).ThenInclude(j => j.Rules!), token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
