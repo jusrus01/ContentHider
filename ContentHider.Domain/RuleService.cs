@@ -281,7 +281,8 @@ public class RuleService : IRuleService
         if (formatRules.Any(rule => rule.Title == createDto.Title))
         {
             throw new InvalidInputHttpException(null,
-                $"Rule '{createDto.Title}' already exists for '{formatId}' format");
+                $"Rule '{createDto.Title}' " +
+                $"already exists for '{formatId}' format");
         }
     }
 

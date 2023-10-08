@@ -1,3 +1,4 @@
+using System.Net;
 using ContentHider.Core.Daos;
 using ContentHider.Core.Exceptions;
 
@@ -9,7 +10,7 @@ public static class OrganizationExtensions
     {
         if (orgs.Count != 1)
         {
-            throw new InvalidInputHttpException(null, "Org not found");
+            throw new InvalidInputHttpException(null, "Organization does not exist", HttpStatusCode.NotFound);
         }
     }
 
@@ -17,7 +18,7 @@ public static class OrganizationExtensions
     {
         if (orgs.Any())
         {
-            throw new InvalidInputHttpException(null, "Org already exists");
+            throw new InvalidInputHttpException(null, "Organization already exists");
         }
     }
 
@@ -27,7 +28,7 @@ public static class OrganizationExtensions
 
         if (org.Formats.Any(assignedFormat => assignedFormat.Id == format.Id || assignedFormat.Title == format.Title))
         {
-            throw new InvalidInputHttpException(null, $"Format for '{org.Id}' org already exists");
+            throw new InvalidInputHttpException(null, $"Format for '{org.Id}' organization already exists");
         }
     }
 
@@ -39,7 +40,7 @@ public static class OrganizationExtensions
             assignedFormat.Id == id);
         if (orgFormat == null)
         {
-            throw new InvalidInputHttpException(null, $"Cannot find format with id '{id}'");
+            throw new InvalidInputHttpException(null, $"Cannot find format with id '{id}'", HttpStatusCode.NotFound);
         }
     }
 }

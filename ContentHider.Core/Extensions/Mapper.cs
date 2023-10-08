@@ -9,7 +9,7 @@ public static class Mapper
 {
     public static RuleDto ToDto(RuleDao dao)
     {
-        return new RuleDto(dao.Id, dao.Title);
+        return new RuleDto(dao.Id, dao.Title, dao.AnonymizedField);
     }
 
     public static FormatDto ToDto(FormatDao format)

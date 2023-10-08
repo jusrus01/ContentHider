@@ -8,6 +8,7 @@ using ContentHider.Core.Exceptions;
 using ContentHider.Core.Extensions;
 using ContentHider.Core.Repositories;
 using ContentHider.Core.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContentHider.Domain;
 
@@ -29,9 +30,7 @@ public class FormatService : IFormatService
         EnsureValidId(orgId);
         EnsureValidArgs(createDto.Title);
 
-        var orgs = await _uow
-            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
-            .ConfigureAwait(false);
+        var orgs = await GetOrgAsync(orgId, token);
 
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault() ?? throw new InvalidOperationException();
@@ -64,10 +63,7 @@ public class FormatService : IFormatService
         EnsureValidId(id);
         EnsureValidArgs(updateDto.Title);
 
-        var orgs = await _uow
-            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token,
-                includeExpr2: i => i.Formats!.Select(format => format.Rules))
-            .ConfigureAwait(false);
+        var orgs = await GetOrgAsync(orgId, token);
 
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault() ?? throw new Exception();
@@ -85,6 +81,12 @@ public class FormatService : IFormatService
             format.Type = updateDto.Type;
         }
 
+        if (format.FormatDefinition != updateDto.FormatDefinition)
+        {
+            EnsureTypeCanChange(format);
+            format.FormatDefinition = updateDto.FormatDefinition;
+        }
+
         await _uow.UpdateAsync(format, token).ConfigureAwait(false);
 
         return Mapper.ToDto(format);
@@ -95,10 +97,7 @@ public class FormatService : IFormatService
         EnsureValidId(orgId);
         EnsureValidId(id);
 
-        var orgs = await _uow
-            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
-            .ConfigureAwait(false);
-
+        var orgs = await GetOrgAsync(orgId, token);
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault() ?? throw new Exception();
         org.EnsureSingleFormat(id);
@@ -117,10 +116,7 @@ public class FormatService : IFormatService
         EnsureValidId(orgId);
         EnsureValidId(id);
 
-        var orgs = await _uow
-            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
-            .ConfigureAwait(false);
-
+        var orgs = await GetOrgAsync(orgId, token);
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault() ?? throw new Exception();
         org.EnsureSingleFormat(id);
@@ -134,14 +130,20 @@ public class FormatService : IFormatService
     {
         EnsureValidId(orgId);
 
-        var orgs = await _uow
-            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
-            .ConfigureAwait(false);
-
+        var orgs = await GetOrgAsync(orgId, token);
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
 
         return org!.Formats!.Select(Mapper.ToDto);
+    }
+
+    private async Task<List<OrganizationDao>> GetOrgAsync(string orgId, CancellationToken token)
+    {
+        return await _uow
+            .GetAsync(
+                SearchPatterns.Org.SelectOrgById(orgId),
+                token: token,
+                include: func => func.Include(i => i.Formats!).ThenInclude(i => i.Rules!));
     }
 
     private static void EnsureFormatDefinitionIsCorrect(string? formatDefinition, FormatType type)
@@ -157,19 +159,17 @@ public class FormatService : IFormatService
         switch (type)
         {
             case FormatType.Json:
-                EnsureJsonIsParsableAndDependentRulesDoNotBreak(formatDefinition, validationException);
+                EnsureJsonIsParsable(formatDefinition, validationException);
                 break;
             case FormatType.Xml:
-                EnsureXmlIsParsableAndDependentRulesDoNotBreak(formatDefinition, validationException);
+                EnsureXmlIsParsable(formatDefinition, validationException);
                 break;
             default:
                 throw validationException;
         }
     }
 
-
-    // TODO: update
-    private static void EnsureJsonIsParsableAndDependentRulesDoNotBreak(string formatDefinition,
+    private static void EnsureJsonIsParsable(string formatDefinition,
         Exception validationException)
     {
         try
@@ -183,8 +183,7 @@ public class FormatService : IFormatService
         }
     }
 
-    // TODO: update
-    private static void EnsureXmlIsParsableAndDependentRulesDoNotBreak(string formatDefinition,
+    private static void EnsureXmlIsParsable(string formatDefinition,
         Exception validationException)
     {
         try

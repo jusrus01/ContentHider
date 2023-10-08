@@ -1,3 +1,3 @@
 namespace ContentHider.Core.Dtos.Rules;
 
-public record RuleDto(string? Id, string? Title);
+public record RuleDto(string? Id, string? Title, string? AnonymizedField);
