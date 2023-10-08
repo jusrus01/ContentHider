@@ -16,6 +16,7 @@ public class HiderDbContext : DbContext
     public DbSet<OrganizationDao> Organizations { get; set; }
     public DbSet<UserDao> Users { get; set; }
     public DbSet<FormatDao> Formats { get; set; }
+    public DbSet<RuleDao> Rules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,7 +31,16 @@ public class HiderDbContext : DbContext
                 .HasForeignKey(i => i.OrganizationId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
-        modelBuilder.Entity<FormatDao>(e => e.HasKey(i => i.Id));
+        modelBuilder.Entity<FormatDao>(e =>
+        {
+            e.HasKey(i => i.Id);
+            e
+                .HasMany(i => i.Rules)
+                .WithOne(i => i.Format)
+                .HasForeignKey(i => i.FormatId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<RuleDao>(e => e.HasKey(i => i.Id));
         modelBuilder.Entity<UserDao>(e =>
         {
             e.HasKey(i => i.Id);
