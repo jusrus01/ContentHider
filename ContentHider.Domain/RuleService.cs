@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text.Json;
 using System.Xml.Linq;
 using ContentHider.Core.Daos;
@@ -112,31 +111,38 @@ public class RuleService : IRuleService
         return format.Rules!.Select(Mapper.ToDto);
     }
 
-    private static void EnsureRuleIsValidForFormatDefinition(FormatDao format, string anonymizedField)
+    public async Task<string> ApplyAsync(string orgId, string formatId, CancellationToken token)
     {
+        EnsureValidId(orgId);
+        EnsureValidId(formatId);
+
+        var format = await ResolveFormatAsync(orgId, formatId, token);
         var definition = format.FormatDefinition ?? throw new ArgumentException();
-        var keyWordPresent = definition.Contains(anonymizedField);
-        if (!keyWordPresent)
-        {
-            throw new InvalidInputHttpException(null,
-                $"Invalid anonymized field. Make sure tag that you want to anonymize exists. Format definition '{definition}'");
-        }
 
         switch (format.Type)
         {
             case FormatType.Json:
-                var obj = JsonSerializer.Deserialize<object>(definition);
-                var fields = obj?.GetType().GetFields();
-                foreach (var field in fields?.ToList() ?? new List<FieldInfo>())
-                {
-                    if (field.Name == anonymizedField)
-                    {
-                        return;
-                    }
-                }
 
-                var properties = obj?.GetType().GetProperties();
-                foreach (var property in properties?.ToList() ?? new List<PropertyInfo>())
+                break;
+            case FormatType.Xml:
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+
+        throw new NotImplementedException();
+    }
+
+    private static void EnsureRuleIsValidForFormatDefinition(FormatDao format, string anonymizedField)
+    {
+        var formatDefinition = format.FormatDefinition ?? throw new ArgumentException();
+        switch (format.Type)
+        {
+            case FormatType.Json:
+                var document = JsonDocument.Parse(formatDefinition);
+                var root = document.RootElement;
+
+                foreach (var property in root.EnumerateObject())
                 {
                     if (property.Name == anonymizedField)
                     {
@@ -145,13 +151,13 @@ public class RuleService : IRuleService
                 }
 
                 throw new InvalidInputHttpException(null,
-                    $"Invalid anonymized field. Make sure tag that you want to anonymize exists and does not exist as a value in your format definition. Format definition '{definition}'");
+                    $"Invalid anonymized field. Make sure tag that you want to anonymize exists and does not exist as a value in your format definition. Format definition '{formatDefinition}'");
             case FormatType.Xml:
-                var doc = XDocument.Parse(definition);
+                var doc = XDocument.Parse(formatDefinition);
                 if (doc.Descendants().Select(i => i.Name).All(i => i != anonymizedField))
                 {
                     throw new InvalidInputHttpException(null,
-                        $"Invalid anonymized field. Make sure tag that you want to anonymize exists and does not exist as a value in your format definition. Format definition '{definition}'");
+                        $"Invalid anonymized field. Make sure tag that you want to anonymize exists and does not exist as a value in your format definition. Format definition '{formatDefinition}'");
                 }
 
                 break;

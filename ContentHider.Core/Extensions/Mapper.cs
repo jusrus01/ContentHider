@@ -14,7 +14,7 @@ public static class Mapper
 
     public static FormatDto ToDto(FormatDao format)
     {
-        var rules = format.Rules?.Select(ToDto).ToList();
+        var rules = format.Rules?.Select(ToDto).ToList() ?? new List<RuleDto>();
 
         return new FormatDto(format.Id, format.OrganizationId, format.Title, rules, format.Type,
             format.FormatDefinition);
@@ -23,7 +23,7 @@ public static class Mapper
     public static OrgDto ToDto(OrganizationDao org)
     {
         var formats = org.Formats?.Select(ToDto)
-            .ToList();
+            .ToList() ?? new List<FormatDto>();
 
         return new OrgDto(org.Id, org.Title, org.Description, formats);
     }
