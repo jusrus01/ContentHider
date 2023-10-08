@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using ContentHider.Core.Daos;
-using ContentHider.Core.Dtos;
+using ContentHider.Core.Dtos.Organizations;
 
 namespace ContentHider.Core.Repositories;
 

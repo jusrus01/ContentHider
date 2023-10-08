@@ -1,5 +1,5 @@
-using ContentHider.Core.Dtos;
 using ContentHider.Core.Dtos.Formats;
+using ContentHider.Core.Dtos.Organizations;
 using ContentHider.Core.Dtos.Rules;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Services;
@@ -52,6 +52,10 @@ public static class ConfigureServices
 
     public static void ConfigureOrganizationEndPoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet(Constants.Routes.OrganizationPreviewRoute,
+            async (CancellationToken token, IOrganizationService orgService)
+                => Results.Ok(await orgService.GetAllPreviewAsync(token).ConfigureAwait(false)));
+
         app.MapPost(Constants.Routes.OrganizationRoute,
             async (CreateOrgDto org, CancellationToken token, IOrganizationService orgService) =>
                 Results.Ok(await orgService.CreateAsync(org, token).ConfigureAwait(false)));

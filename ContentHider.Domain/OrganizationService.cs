@@ -1,5 +1,5 @@
 using ContentHider.Core.Daos;
-using ContentHider.Core.Dtos;
+using ContentHider.Core.Dtos.Organizations;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Extensions;
 using ContentHider.Core.Repositories;
@@ -90,6 +90,14 @@ public class OrganizationService : IOrganizationService
         return orgs.Select(ToDto);
     }
 
+    public async Task<IEnumerable<OrgPreviewDto>> GetAllPreviewAsync(CancellationToken token)
+    {
+        var orgs = await _uow
+            .GetAsync<OrganizationDao>(token: token)
+            .ConfigureAwait(false);
+        return orgs.Select(ToPreviewDto);
+    }
+
     public async Task<OrgDto> GetByIdAsync(string id, CancellationToken token)
     {
         EnsureValidId(id);
@@ -111,6 +119,16 @@ public class OrganizationService : IOrganizationService
         ArgumentNullException.ThrowIfNull(org.Id);
 
         return new OrgDto(org.Id, org.Title, org.Description);
+    }
+
+    private static OrgPreviewDto ToPreviewDto(OrganizationDao? org)
+    {
+        ArgumentNullException.ThrowIfNull(org);
+        ArgumentNullException.ThrowIfNull(org.Title);
+        ArgumentNullException.ThrowIfNull(org.Description);
+        ArgumentNullException.ThrowIfNull(org.Id);
+
+        return new OrgPreviewDto(org.Title, org.Description);
     }
 
     private static void EnsureValidArgs(string title, string description)

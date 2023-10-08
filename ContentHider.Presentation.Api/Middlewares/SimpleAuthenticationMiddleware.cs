@@ -19,6 +19,12 @@ public class SimpleAuthenticationMiddleware
     // ReSharper disable once UnusedMember.Global
     public async Task InvokeAsync(HttpContext context, ICallerAccessor callerAccessor, IUnitOfWork uow)
     {
+        if (context.Request.Path == Constants.Routes.OrganizationPreviewRoute)
+        {
+            await _next(context);
+            return;
+        }
+
         var userId = callerAccessor.UserId;
         var user = (await uow.GetAsync<UserDao>(selector: i => i.Id == userId, token: context.RequestAborted)
             ).SingleOrDefault();
@@ -40,9 +46,9 @@ public class SimpleAuthenticationMiddleware
         }
     }
 
-    private static void EnsureUserAllowed(UserDao user)
+    private static void EnsureUserAllowed(UserDao? user)
     {
-        if (user.Role != Roles.Admin)
+        if (user == null || user.Role != Roles.Admin)
         {
             throw new HttpException(null, "User cannot do this action", HttpStatusCode.Unauthorized);
         }
