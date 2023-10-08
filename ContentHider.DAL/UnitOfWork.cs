@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using ContentHider.Core.Daos;
 using ContentHider.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace ContentHider.DAL;
 
@@ -32,7 +33,7 @@ public class UnitOfWork : IUnitOfWork
         await _context.SaveChangesAsync(token);
     }
 
-    public Task<List<T>> GetAsync<T>(
+    public Task<List<T>> GetDeprecatedAsync<T>(
         Expression<Func<T, object>>? includeExpr1 = null,
         Expression<Func<T, bool>>? selector = null,
         Expression<Func<T, object>>? includeExpr2 = null,
@@ -57,6 +58,22 @@ public class UnitOfWork : IUnitOfWork
 
         return _context.Set<T>()
             .Include(includeExpr1)
+            .Where(selector ?? (_ => true))
+            .ToListAsync(token);
+    }
+
+    public Task<List<T>> GetAsync<T>(Expression<Func<T, bool>>? selector = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        CancellationToken token = default) where T : Dao
+    {
+        if (include != null)
+        {
+            return include(_context.Set<T>())
+                .Where(selector ?? (_ => true))
+                .ToListAsync(token);
+        }
+
+        return _context.Set<T>()
             .Where(selector ?? (_ => true))
             .ToListAsync(token);
     }

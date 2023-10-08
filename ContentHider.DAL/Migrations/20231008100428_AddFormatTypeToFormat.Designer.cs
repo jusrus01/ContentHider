@@ -2,6 +2,7 @@
 using ContentHider.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContentHider.DAL.Migrations
 {
     [DbContext(typeof(HiderDbContext))]
-    partial class HiderDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231008100428_AddFormatTypeToFormat")]
+    partial class AddFormatTypeToFormat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +27,6 @@ namespace ContentHider.DAL.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FormatDefinition")
                         .HasColumnType("longtext");
 
                     b.Property<string>("OrganizationId")

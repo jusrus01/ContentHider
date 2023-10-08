@@ -4,6 +4,8 @@ using ContentHider.Core.Exceptions;
 using ContentHider.Core.Extensions;
 using ContentHider.Core.Repositories;
 using ContentHider.Core.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace ContentHider.Domain;
 
@@ -27,7 +29,7 @@ public class OrganizationService : IOrganizationService
         EnsureValidArgs(dto.Title, dto.Description);
 
         var orgs = await _uow
-            .GetAsync(selector: SearchPatterns.Org.SearchOrgByTitle(dto), token: token)
+            .GetAsync(SearchPatterns.Org.SearchOrgByTitle(dto), token: token)
             .ConfigureAwait(false);
         orgs.EnsureEmpty();
 
@@ -41,7 +43,7 @@ public class OrganizationService : IOrganizationService
 
         await _uow.SaveAsync(newOrg, token).ConfigureAwait(false);
 
-        return ToDto(newOrg);
+        return Mapper.ToDto(newOrg);
     }
 
     public async Task<OrgDto> UpdateAsync(string id, UpdateOrgDto dto, CancellationToken token)
@@ -50,7 +52,7 @@ public class OrganizationService : IOrganizationService
         EnsureValidArgs(dto.Title, dto.Description);
 
         var orgs = await _uow
-            .GetAsync(selector: SearchPatterns.Org.SelectOrgById(id), token: token)
+            .GetAsync(SearchPatterns.Org.SelectOrgById(id), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -62,20 +64,20 @@ public class OrganizationService : IOrganizationService
         await _uow.UpdateAsync(org, token)
             .ConfigureAwait(false);
 
-        return ToDto(org);
+        return Mapper.ToDto(org);
     }
 
     public async Task<OrgDto> DeleteAsync(string id, CancellationToken token)
     {
         EnsureValidId(id);
         var orgs = await _uow
-            .GetAsync(selector: SearchPatterns.Org.SelectOrgById(id), token: token)
+            .GetAsync(SearchPatterns.Org.SelectOrgById(id), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
 
-        var dto = ToDto(org);
+        var dto = Mapper.ToDto(org!);
 #pragma warning disable CS8631
         await _uow.DeleteAsync(org, token).ConfigureAwait(false);
 #pragma warning restore CS8631
@@ -84,10 +86,15 @@ public class OrganizationService : IOrganizationService
 
     public async Task<IEnumerable<OrgDto>> GetAllAsync(CancellationToken token)
     {
+        IIncludableQueryable<OrganizationDao, object> Include(IQueryable<OrganizationDao> func) =>
+            func
+                .Include(i => i.Formats!)
+                .ThenInclude(i => i.Rules!);
+
         var orgs = await _uow
-            .GetAsync<OrganizationDao>(token: token)
+            .GetAsync<OrganizationDao>(token: token, include: Include)
             .ConfigureAwait(false);
-        return orgs.Select(ToDto);
+        return orgs.Select(Mapper.ToDto);
     }
 
     public async Task<IEnumerable<OrgPreviewDto>> GetAllPreviewAsync(CancellationToken token)
@@ -100,25 +107,20 @@ public class OrganizationService : IOrganizationService
 
     public async Task<OrgDto> GetByIdAsync(string id, CancellationToken token)
     {
+        IIncludableQueryable<OrganizationDao, object> Include(IQueryable<OrganizationDao> func) =>
+            func
+                .Include(i => i.Formats!)
+                .ThenInclude(i => i.Rules!);
+
         EnsureValidId(id);
         var orgs = await _uow
-            .GetAsync(selector: SearchPatterns.Org.SelectOrgById(id), token: token)
+            .GetAsync(SearchPatterns.Org.SelectOrgById(id), token: token, include: Include)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
 
-        return ToDto(org);
-    }
-
-    private static OrgDto ToDto(OrganizationDao? org)
-    {
-        ArgumentNullException.ThrowIfNull(org);
-        ArgumentNullException.ThrowIfNull(org.Title);
-        ArgumentNullException.ThrowIfNull(org.Description);
-        ArgumentNullException.ThrowIfNull(org.Id);
-
-        return new OrgDto(org.Id, org.Title, org.Description);
+        return Mapper.ToDto(org!);
     }
 
     private static OrgPreviewDto ToPreviewDto(OrganizationDao? org)

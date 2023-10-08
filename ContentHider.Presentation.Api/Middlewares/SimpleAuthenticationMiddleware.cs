@@ -26,7 +26,8 @@ public class SimpleAuthenticationMiddleware
         }
 
         var userId = callerAccessor.UserId;
-        var user = (await uow.GetAsync<UserDao>(selector: i => i.Id == userId, token: context.RequestAborted)
+        var user = (await uow.GetDeprecatedAsync<UserDao>(selector: i => i.Id == userId, token: context.RequestAborted,
+                includeExpr1: null)
             ).SingleOrDefault();
         if (user == null)
         {

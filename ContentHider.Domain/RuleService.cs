@@ -39,7 +39,7 @@ public class RuleService : IRuleService
 
         await _uow.SaveAsync(rule, token);
 
-        return ToDto(rule);
+        return Mapper.ToDto(rule);
     }
 
 
@@ -60,7 +60,7 @@ public class RuleService : IRuleService
 
         await _uow.UpdateAsync(rule, token);
 
-        return ToDto(rule);
+        return Mapper.ToDto(rule);
     }
 
     public async Task<RuleDto> DeleteAsync(string orgId, string formatId, string id, CancellationToken token)
@@ -73,7 +73,7 @@ public class RuleService : IRuleService
         EnsureRuleCreated(format.Id, format.Rules, id);
 
         var rule = format.Rules!.Single(rule => rule.Id == id);
-        var dto = ToDto(rule);
+        var dto = Mapper.ToDto(rule);
 
         await _uow.DeleteAsync(rule, token);
 
@@ -91,7 +91,7 @@ public class RuleService : IRuleService
 
         var rule = format.Rules!.Single(rule => rule.Id == id);
 
-        return ToDto(rule);
+        return Mapper.ToDto(rule);
     }
 
     public async Task<IEnumerable<RuleDto>> GetAllAsync(string orgId, string formatId, CancellationToken token)
@@ -100,7 +100,7 @@ public class RuleService : IRuleService
         EnsureValidId(formatId);
 
         var format = await ResolveFormatAsync(orgId, formatId, token);
-        return format.Rules!.Select(ToDto);
+        return format.Rules!.Select(Mapper.ToDto);
     }
 
     private static void EnsureRuleCreated(string? formatId, List<RuleDao>? formatRules, string? id)
@@ -143,15 +143,10 @@ public class RuleService : IRuleService
         }
     }
 
-    private static RuleDto ToDto(RuleDao dao)
-    {
-        return new RuleDto(dao.Id, dao.Title);
-    }
-
     private async Task<FormatDao> ResolveFormatAsync(string orgId, string formatId, CancellationToken token)
     {
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId),
+            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId),
                 i => i.Formats!.Select(format => format.Rules), token)
             .ConfigureAwait(false);
 

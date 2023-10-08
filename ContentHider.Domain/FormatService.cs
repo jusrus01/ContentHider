@@ -1,5 +1,9 @@
+using System.Net;
+using System.Text.Json;
+using System.Xml.Linq;
 using ContentHider.Core.Daos;
 using ContentHider.Core.Dtos.Formats;
+using ContentHider.Core.Enums;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Extensions;
 using ContentHider.Core.Repositories;
@@ -20,36 +24,40 @@ public class FormatService : IFormatService
         _uow = uow;
     }
 
-    public async Task<OrgFormatDto> CreateAsync(string orgId, OrgCreateFormatDto createDto, CancellationToken token)
+    public async Task<FormatDto> CreateAsync(string orgId, CreateFormatDto createDto, CancellationToken token)
     {
         EnsureValidId(orgId);
         EnsureValidArgs(createDto.Title);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
+            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault() ?? throw new InvalidOperationException();
 
+        EnsureFormatDefinitionIsCorrect(createDto.FormatDefinition, createDto.Type);
         var format = new FormatDao
         {
             Id = Guid.NewGuid().ToString(),
             OrganizationId = org.Id,
-            Title = createDto.Title
+            Title = createDto.Title,
+            Description = createDto.Description,
+            Type = createDto.Type,
+            FormatDefinition = createDto.FormatDefinition
         };
 
         org.EnsureFormatDoesNotExist(format);
 
         await _uow.SaveAsync(format, token).ConfigureAwait(false);
 
-        return ToDto(format);
+        return Mapper.ToDto(format);
     }
 
-    public async Task<OrgFormatDto> UpdateAsync(
+    public async Task<FormatDto> UpdateAsync(
         string orgId,
         string id,
-        OrgUpdateFormatDto updateDto,
+        UpdateFormatDto updateDto,
         CancellationToken token)
     {
         EnsureValidId(orgId);
@@ -57,7 +65,8 @@ public class FormatService : IFormatService
         EnsureValidArgs(updateDto.Title);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
+            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token,
+                includeExpr2: i => i.Formats!.Select(format => format.Rules))
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -65,20 +74,29 @@ public class FormatService : IFormatService
         org.EnsureSingleFormat(id);
 
         var format = org.Formats?.SingleOrDefault(i => i.Id == id) ?? throw new Exception();
+
         format.Title = updateDto.Title;
+        format.Description = updateDto.Description;
+
+        if (format.Type != updateDto.Type)
+        {
+            EnsureTypeCanChange(format);
+            EnsureFormatDefinitionIsCorrect(updateDto.FormatDefinition, updateDto.Type);
+            format.Type = updateDto.Type;
+        }
 
         await _uow.UpdateAsync(format, token).ConfigureAwait(false);
 
-        return ToDto(format);
+        return Mapper.ToDto(format);
     }
 
-    public async Task<OrgFormatDto> DeleteAsync(string orgId, string id, CancellationToken token)
+    public async Task<FormatDto> DeleteAsync(string orgId, string id, CancellationToken token)
     {
         EnsureValidId(orgId);
         EnsureValidId(id);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
+            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -86,7 +104,7 @@ public class FormatService : IFormatService
         org.EnsureSingleFormat(id);
 
         var format = org.Formats?.SingleOrDefault(i => i.Id == id) ?? throw new Exception();
-        var dto = ToDto(format);
+        var dto = Mapper.ToDto(format);
 
 
         await _uow.DeleteAsync(format, token);
@@ -94,13 +112,13 @@ public class FormatService : IFormatService
         return dto;
     }
 
-    public async Task<OrgFormatDto> GetByIdAsync(string orgId, string id, CancellationToken token)
+    public async Task<FormatDto> GetByIdAsync(string orgId, string id, CancellationToken token)
     {
         EnsureValidId(orgId);
         EnsureValidId(id);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
+            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -109,26 +127,79 @@ public class FormatService : IFormatService
 
         var format = org.Formats?.SingleOrDefault(i => i.Id == id) ?? throw new Exception();
 
-        return ToDto(format);
+        return Mapper.ToDto(format);
     }
 
-    public async Task<IEnumerable<OrgFormatDto>> GetAllAsync(string orgId, CancellationToken token)
+    public async Task<IEnumerable<FormatDto>> GetAllAsync(string orgId, CancellationToken token)
     {
         EnsureValidId(orgId);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
+            .GetDeprecatedAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
         var org = orgs.SingleOrDefault();
 
-        return org!.Formats!.Select(ToDto);
+        return org!.Formats!.Select(Mapper.ToDto);
     }
 
-    private static OrgFormatDto ToDto(FormatDao format)
+    private static void EnsureFormatDefinitionIsCorrect(string? formatDefinition, FormatType type)
     {
-        return new OrgFormatDto(format.Id, format.OrganizationId, format.Title);
+        var validationException = new HttpException(null, $"Invalid format definition for '{type}' type",
+            HttpStatusCode.BadRequest);
+
+        if (string.IsNullOrWhiteSpace(formatDefinition))
+        {
+            throw validationException;
+        }
+
+        switch (type)
+        {
+            case FormatType.Json:
+                EnsureJsonIsParsable(formatDefinition, validationException);
+                break;
+            case FormatType.Xml:
+                EnsureXmlIsParsable(formatDefinition, validationException);
+                break;
+            default:
+                throw validationException;
+        }
+    }
+
+    private static void EnsureJsonIsParsable(string formatDefinition, Exception validationException)
+    {
+        try
+        {
+            JsonSerializer.Deserialize<object>(formatDefinition);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw validationException;
+        }
+    }
+
+    private static void EnsureXmlIsParsable(string formatDefinition, Exception validationException)
+    {
+        try
+        {
+            XDocument.Parse(formatDefinition);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw validationException;
+        }
+    }
+
+    private static void EnsureTypeCanChange(FormatDao format)
+    {
+        if (format.Rules!.Any())
+        {
+            throw new InvalidInputHttpException(null,
+                "Cannot change format type that already has rules assigned to it. Delete all rules if you want to change type.");
+        }
     }
 
     private static void EnsureValidId(string id)
