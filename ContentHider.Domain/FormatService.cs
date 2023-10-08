@@ -30,7 +30,7 @@ public class FormatService : IFormatService
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
-        var org = orgs.SingleOrDefault();
+        var org = orgs.SingleOrDefault() ?? throw new InvalidOperationException();
 
         var format = new FormatDao
         {

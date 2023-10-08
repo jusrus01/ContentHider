@@ -27,7 +27,8 @@ public class HiderDbContext : DbContext
             e
                 .HasMany(i => i.Formats)
                 .WithOne(i => i.Organization)
-                .HasForeignKey(i => i.OrganizationId);
+                .HasForeignKey(i => i.OrganizationId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
         modelBuilder.Entity<FormatDao>(e => e.HasKey(i => i.Id));
         modelBuilder.Entity<UserDao>(e =>
