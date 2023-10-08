@@ -86,6 +86,22 @@ public static class ConfigureServices
                     CancellationToken token,
                     IFormatService formatService) =>
                 Results.Ok(await formatService.UpdateAsync(orgId, id, format, token).ConfigureAwait(false)));
+
+        app.MapGet(Constants.Routes.TextFormatRoute,
+            async (string orgId, CancellationToken token, IFormatService formatService)
+                => Results.Ok(await formatService.GetAllAsync(orgId, token).ConfigureAwait(false)));
+
+        app.MapGet($"{Constants.Routes.TextFormatRoute}/{{id}}",
+            async (string orgId, string id, CancellationToken token, IFormatService formatService)
+                => Results.Ok(await formatService.GetByIdAsync(orgId, id, token).ConfigureAwait(false)));
+
+        app.MapDelete($"{Constants.Routes.TextFormatRoute}/{{id}}",
+            async (
+                    string orgId,
+                    string id,
+                    CancellationToken token,
+                    IFormatService formatService) =>
+                Results.Ok(await formatService.DeleteAsync(orgId, id, token).ConfigureAwait(false)));
     }
 
     public static void ConfigureRulesEndPoints(this IEndpointRouteBuilder app)

@@ -60,14 +60,10 @@ public class FormatService : IFormatService
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
-        var org = orgs.SingleOrDefault();
+        var org = orgs.SingleOrDefault() ?? throw new Exception();
+        org.EnsureSingleFormat(id);
 
-        var format = org.Formats.SingleOrDefault(i => i.Id == id);
-        if (format == null)
-        {
-            throw new InvalidInputHttpException(null, $"Cannot find format with id '{id}'");
-        }
-
+        var format = org.Formats?.SingleOrDefault(i => i.Id == id) ?? throw new Exception();
         format.Title = updateDto.Title;
 
         await _uow.UpdateAsync(format, token).ConfigureAwait(false);
@@ -75,24 +71,61 @@ public class FormatService : IFormatService
         return ToDto(format);
     }
 
-    public Task<OrgFormatDto> DeleteAsync(string orgId, string id, CancellationToken token)
+    public async Task<OrgFormatDto> DeleteAsync(string orgId, string id, CancellationToken token)
     {
-        throw new NotImplementedException();
+        EnsureValidId(orgId);
+
+        var orgs = await _uow
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .ConfigureAwait(false);
+
+        orgs.EnsureSingle();
+        var org = orgs.SingleOrDefault() ?? throw new Exception();
+        org.EnsureSingleFormat(id);
+
+        var format = org.Formats?.SingleOrDefault(i => i.Id == id) ?? throw new Exception();
+        var dto = ToDto(format);
+
+
+        await _uow.DeleteAsync(format, token);
+
+        return dto;
     }
 
-    public Task<OrgFormatDto> GetByIdAsync(string orgId, string id, CancellationToken token)
+    public async Task<OrgFormatDto> GetByIdAsync(string orgId, string id, CancellationToken token)
     {
-        throw new NotImplementedException();
+        EnsureValidId(orgId);
+
+        var orgs = await _uow
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .ConfigureAwait(false);
+
+        orgs.EnsureSingle();
+        var org = orgs.SingleOrDefault() ?? throw new Exception();
+        org.EnsureSingleFormat(id);
+
+        var format = org.Formats?.SingleOrDefault(i => i.Id == id) ?? throw new Exception();
+
+        return ToDto(format);
     }
 
-    public Task<IEnumerable<OrgFormatDto>> GetAllAsync(string orgId, CancellationToken token)
+    public async Task<IEnumerable<OrgFormatDto>> GetAllAsync(string orgId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        EnsureValidId(orgId);
+
+        var orgs = await _uow
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .ConfigureAwait(false);
+
+        orgs.EnsureSingle();
+        var org = orgs.SingleOrDefault();
+
+        return org!.Formats!.Select(ToDto);
     }
 
     private static OrgFormatDto ToDto(FormatDao format)
     {
-        return new OrgFormatDto(format.Title);
+        return new OrgFormatDto(format.Id, format.OrganizationId, format.Title);
     }
 
     private static void EnsureValidId(string id)

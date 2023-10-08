@@ -1,3 +1,3 @@
 namespace ContentHider.Core.Dtos.Formats;
 
-public record OrgFormatDto(string Title);
+public record OrgFormatDto(string? Id, string? OrganizationId, string? Title);

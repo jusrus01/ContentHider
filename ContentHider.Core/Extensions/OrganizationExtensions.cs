@@ -30,4 +30,16 @@ public static class OrganizationExtensions
             throw new InvalidInputHttpException(null, $"Format for '{org.Id}' org already exists");
         }
     }
+
+    public static void EnsureSingleFormat(this OrganizationDao org, string id)
+    {
+        ArgumentNullException.ThrowIfNull(org.Formats);
+
+        var orgFormat = org.Formats.SingleOrDefault(assignedFormat =>
+            assignedFormat.Id == id);
+        if (orgFormat == null)
+        {
+            throw new InvalidInputHttpException(null, $"Cannot find format with id '{id}'");
+        }
+    }
 }
