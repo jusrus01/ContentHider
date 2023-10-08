@@ -165,12 +165,53 @@ public class RuleService : IRuleService
 
                 return new TransformedTextDto(JsonSerializer.Serialize(dictionary));
             case FormatType.Xml:
-                throw new NotImplementedException();
+                var formatElements = XElement.Parse(formatDefinition).Elements().ToList();
+                XElement? textRootElement = null;
+                List<XElement>? textElements = null;
+                try
+                {
+                    textRootElement = XElement.Parse(text);
+                    textElements = textRootElement.Elements().ToList() ?? new List<XElement>();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw new InvalidInputHttpException(null,
+                        $"Received text does not comply with this format definition '{formatDefinition}'");
+                }
+
+                EnsureMatchesFormat(formatElements, textElements, formatDefinition);
+
+                var elementRules = format.Rules ?? new List<RuleDao>();
+                foreach (var property in textElements)
+                {
+                    if (elementRules.Any(rule => rule.AnonymizedField == property.Name))
+                    {
+                        property.SetValue(HiddenContent);
+                    }
+                }
+
+                return new TransformedTextDto(textRootElement.ToString());
+
             default:
                 throw new NotSupportedException();
         }
+    }
 
-        throw new InvalidOperationException();
+    private static void EnsureMatchesFormat(List<XElement> formatElements, List<XElement> textElements,
+        string formatDefinition)
+    {
+        if (formatElements.Count != textElements.Count)
+        {
+            throw new InvalidInputHttpException(null,
+                $"Received text does not comply with this format definition '{formatDefinition}'");
+        }
+
+        if (formatElements.Any(property => textElements.All(i => i.Name != property.Name)))
+        {
+            throw new InvalidInputHttpException(null,
+                $"Received text does not comply with this format definition '{formatDefinition}'");
+        }
     }
 
     private static void EnsureMatchesFormat(List<JsonProperty> formatObjects, List<JsonProperty> textObjects,
