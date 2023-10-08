@@ -17,6 +17,7 @@ namespace ContentHider.Domain;
 /// </summary>
 public class RuleService : IRuleService
 {
+    private const string HiddenContent = "HIDDEN";
     private readonly IUnitOfWork _uow;
 
     public RuleService(IUnitOfWork uow)
@@ -111,26 +112,80 @@ public class RuleService : IRuleService
         return format.Rules!.Select(Mapper.ToDto);
     }
 
-    public async Task<string> ApplyAsync(string orgId, string formatId, CancellationToken token)
+    public async Task<string> ApplyAsync(string orgId, string formatId, string text, CancellationToken token)
     {
         EnsureValidId(orgId);
         EnsureValidId(formatId);
+        EnsureValidId(text);
 
         var format = await ResolveFormatAsync(orgId, formatId, token);
-        var definition = format.FormatDefinition ?? throw new ArgumentException();
+        var formatDefinition = format.FormatDefinition ?? throw new ArgumentException();
 
         switch (format.Type)
         {
             case FormatType.Json:
+                var formatDocument = JsonDocument.Parse(formatDefinition);
+                JsonDocument? textDocument = null;
+                try
+                {
+                    textDocument = JsonDocument.Parse(formatDefinition);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw new InvalidInputHttpException(null,
+                        $"Received text does not comply with this format definition '{formatDefinition}'");
+                }
 
-                break;
+                var formatObjects = formatDocument.RootElement
+                    .EnumerateObject()
+                    .Select(i => i)
+                    .ToList();
+                var textObjects = textDocument.RootElement
+                    .EnumerateObject()
+                    .Select(i => i)
+                    .ToList();
+                EnsureMatchesFormat(formatObjects, textObjects, formatDefinition);
+
+                var rules = format.Rules ?? new List<RuleDao>();
+                var dictionary = new Dictionary<string, object>();
+
+                foreach (var property in textObjects)
+                {
+                    if (rules.Any(rule => rule.AnonymizedField == property.Name))
+                    {
+                        dictionary.Add(property.Name, HiddenContent);
+                    }
+                    else
+                    {
+                        dictionary.Add(property.Name, property.Value);
+                    }
+                }
+
+                return JsonSerializer.Serialize(dictionary);
             case FormatType.Xml:
-                break;
+                throw new NotImplementedException();
             default:
                 throw new NotSupportedException();
         }
 
-        throw new NotImplementedException();
+        throw new InvalidOperationException();
+    }
+
+    private static void EnsureMatchesFormat(List<JsonProperty> formatObjects, List<JsonProperty> textObjects,
+        string formatDefinition)
+    {
+        if (formatObjects.Count != textObjects.Count)
+        {
+            throw new InvalidInputHttpException(null,
+                $"Received text does not comply with this format definition '{formatDefinition}'");
+        }
+
+        if (formatObjects.Any(property => textObjects.All(i => i.Name != property.Name)))
+        {
+            throw new InvalidInputHttpException(null,
+                $"Received text does not comply with this format definition '{formatDefinition}'");
+        }
     }
 
     private static void EnsureRuleIsValidForFormatDefinition(FormatDao format, string anonymizedField)

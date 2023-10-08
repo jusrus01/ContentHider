@@ -116,6 +116,11 @@ public static class ConfigureServices
                     IRuleService ruleService) =>
                 Results.Ok(await ruleService.CreateAsync(orgId, formatId, rule, token).ConfigureAwait(false)));
 
+        app.MapPost($"{Constants.Routes.RuleRoute}/apply",
+            async (string orgId, string formatId, ApplyRuleDto rule, CancellationToken token,
+                    IRuleService ruleService) =>
+                Results.Ok(await ruleService.ApplyAsync(orgId, formatId, rule.Text, token).ConfigureAwait(false)));
+
         app.MapPut($"{Constants.Routes.RuleRoute}/{{id}}",
             async (
                     string orgId,

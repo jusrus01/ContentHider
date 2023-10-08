@@ -13,5 +13,5 @@ public interface IRuleService
     Task<RuleDto> GetByIdAsync(string orgId, string formatId, string id, CancellationToken token);
     Task<IEnumerable<RuleDto>> GetAllAsync(string orgId, string formatId, CancellationToken token);
 
-    Task<string> ApplyAsync(string orgId, string formatId, CancellationToken token);
+    Task<string> ApplyAsync(string orgId, string formatId, string text, CancellationToken token);
 }
