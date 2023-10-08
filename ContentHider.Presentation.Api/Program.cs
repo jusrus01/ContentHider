@@ -29,6 +29,7 @@ builder.Services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IFormatService, FormatService>();
+builder.Services.AddScoped<IRuleService, RuleService>();
 
 // builder.Services.AddSwaggerGen();
 var app = builder.Build();

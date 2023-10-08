@@ -1,5 +1,6 @@
 using ContentHider.Core.Dtos;
 using ContentHider.Core.Dtos.Formats;
+using ContentHider.Core.Dtos.Rules;
 using ContentHider.Core.Exceptions;
 using ContentHider.Core.Services;
 
@@ -106,5 +107,36 @@ public static class ConfigureServices
 
     public static void ConfigureRulesEndPoints(this IEndpointRouteBuilder app)
     {
+        app.MapPost(Constants.Routes.RuleRoute,
+            async (string orgId, string formatId, CreateRuleDto rule, CancellationToken token,
+                    IRuleService ruleService) =>
+                Results.Ok(await ruleService.CreateAsync(orgId, formatId, rule, token).ConfigureAwait(false)));
+
+        app.MapPut($"{Constants.Routes.RuleRoute}/{{id}}",
+            async (
+                    string orgId,
+                    string formatId,
+                    string id,
+                    UpdateRuleDto rule,
+                    CancellationToken token,
+                    IRuleService ruleService) =>
+                Results.Ok(await ruleService.UpdateAsync(orgId, formatId, id, rule, token).ConfigureAwait(false)));
+
+        app.MapGet(Constants.Routes.RuleRoute,
+            async (string orgId, string formatId, CancellationToken token, IRuleService ruleService)
+                => Results.Ok(await ruleService.GetAllAsync(orgId, formatId, token).ConfigureAwait(false)));
+
+        app.MapGet($"{Constants.Routes.RuleRoute}/{{id}}",
+            async (string orgId, string formatId, string id, CancellationToken token, IRuleService ruleService)
+                => Results.Ok(await ruleService.GetByIdAsync(orgId, formatId, id, token).ConfigureAwait(false)));
+
+        app.MapDelete($"{Constants.Routes.RuleRoute}/{{id}}",
+            async (
+                    string orgId,
+                    string formatId,
+                    string id,
+                    CancellationToken token,
+                    IRuleService ruleService) =>
+                Results.Ok(await ruleService.DeleteAsync(orgId, formatId, id, token).ConfigureAwait(false)));
     }
 }

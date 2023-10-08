@@ -6,5 +6,6 @@ public static class Constants
     {
         public const string OrganizationRoute = "/org";
         public const string TextFormatRoute = $"{OrganizationRoute}/{{orgId}}/format";
+        public const string RuleRoute = $"{TextFormatRoute}/{{formatId}}/rule";
     }
 }
