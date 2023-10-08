@@ -112,7 +112,8 @@ public class RuleService : IRuleService
         return format.Rules!.Select(Mapper.ToDto);
     }
 
-    public async Task<string> ApplyAsync(string orgId, string formatId, string text, CancellationToken token)
+    public async Task<TransformedTextDto> ApplyAsync(string orgId, string formatId, string text,
+        CancellationToken token)
     {
         EnsureValidId(orgId);
         EnsureValidId(formatId);
@@ -128,7 +129,7 @@ public class RuleService : IRuleService
                 JsonDocument? textDocument = null;
                 try
                 {
-                    textDocument = JsonDocument.Parse(formatDefinition);
+                    textDocument = JsonDocument.Parse(text);
                 }
                 catch (Exception e)
                 {
@@ -162,7 +163,7 @@ public class RuleService : IRuleService
                     }
                 }
 
-                return JsonSerializer.Serialize(dictionary);
+                return new TransformedTextDto(JsonSerializer.Serialize(dictionary));
             case FormatType.Xml:
                 throw new NotImplementedException();
             default:
