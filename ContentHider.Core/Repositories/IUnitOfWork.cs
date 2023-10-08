@@ -6,8 +6,9 @@ namespace ContentHider.Core.Repositories;
 public interface IUnitOfWork
 {
     Task<List<T>> GetAsync<T>(
-        Expression<Func<T, object>> includeExpr = null,
+        Expression<Func<T, object>>? includeExpr1 = null,
         Expression<Func<T, bool>>? selector = null,
+        Expression<Func<T, object>>? includeExpr2 = null,
         CancellationToken token = default)
         where T : Dao;
 

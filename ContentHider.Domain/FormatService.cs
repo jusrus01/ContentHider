@@ -26,7 +26,7 @@ public class FormatService : IFormatService
         EnsureValidArgs(createDto.Title);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -53,10 +53,11 @@ public class FormatService : IFormatService
         CancellationToken token)
     {
         EnsureValidId(orgId);
+        EnsureValidId(id);
         EnsureValidArgs(updateDto.Title);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -74,9 +75,10 @@ public class FormatService : IFormatService
     public async Task<OrgFormatDto> DeleteAsync(string orgId, string id, CancellationToken token)
     {
         EnsureValidId(orgId);
+        EnsureValidId(id);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -95,9 +97,10 @@ public class FormatService : IFormatService
     public async Task<OrgFormatDto> GetByIdAsync(string orgId, string id, CancellationToken token)
     {
         EnsureValidId(orgId);
+        EnsureValidId(id);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();
@@ -114,7 +117,7 @@ public class FormatService : IFormatService
         EnsureValidId(orgId);
 
         var orgs = await _uow
-            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token)
+            .GetAsync(i => i.Formats!, SearchPatterns.Org.SelectOrgById(orgId), token: token)
             .ConfigureAwait(false);
 
         orgs.EnsureSingle();

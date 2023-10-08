@@ -1,3 +1,3 @@
 namespace ContentHider.Core.Dtos.Rules;
 
-public record CreateRuleDto();
+public record CreateRuleDto(string Title);
