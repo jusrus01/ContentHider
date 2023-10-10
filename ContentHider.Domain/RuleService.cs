@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using System.Xml.Linq;
 using ContentHider.Core.Daos;
@@ -270,7 +271,7 @@ public class RuleService : IRuleService
         if (formatRules.All(rule => rule.Id != id))
         {
             throw new InvalidInputHttpException(null,
-                $"Rule '{id}' is not found for '{formatId}' format");
+                $"Rule '{id}' is not found for '{formatId}' format", HttpStatusCode.NotFound);
         }
     }
 

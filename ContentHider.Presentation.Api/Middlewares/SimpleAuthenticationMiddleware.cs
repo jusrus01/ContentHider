@@ -19,7 +19,8 @@ public class SimpleAuthenticationMiddleware
     // ReSharper disable once UnusedMember.Global
     public async Task InvokeAsync(HttpContext context, ICallerAccessor callerAccessor, IUnitOfWork uow)
     {
-        if (context.Request.Path == Constants.Routes.OrganizationPreviewRoute)
+        if (context.Request.Path == Constants.Routes.OrganizationPreviewRoute ||
+            context.Request.Path.ToString().Contains("swagger"))
         {
             await _next(context);
             return;

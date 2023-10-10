@@ -31,7 +31,9 @@ builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IFormatService, FormatService>();
 builder.Services.AddScoped<IRuleService, RuleService>();
 
-// builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options => options.EnableAnnotations());
+
 var app = builder.Build();
 
 // app.UseHttpsRedirection();
@@ -41,5 +43,8 @@ app.UseMiddleware<SimpleAuthenticationMiddleware>();
 app.ConfigureOrganizationEndPoints();
 app.ConfigureTextFormatEndPoints();
 app.ConfigureRulesEndPoints();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();

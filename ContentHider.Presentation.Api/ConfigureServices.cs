@@ -25,7 +25,7 @@ public static class ConfigureServices
             }
             catch (Exception ex)
             {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 context.Response.Headers.Clear();
 
                 await context.Response.WriteAsJsonAsync(GetErrorResponse(ex));
@@ -58,7 +58,8 @@ public static class ConfigureServices
 
         app.MapPost(Constants.Routes.OrganizationRoute,
             async (CreateOrgDto org, CancellationToken token, IOrganizationService orgService) =>
-                Results.Ok(await orgService.CreateAsync(org, token).ConfigureAwait(false)));
+                Results.Created(new Uri("about:blank"),
+                    await orgService.CreateAsync(org, token).ConfigureAwait(false)));
 
         app.MapGet(Constants.Routes.OrganizationRoute,
             async (CancellationToken token, IOrganizationService orgService)
@@ -81,7 +82,8 @@ public static class ConfigureServices
     {
         app.MapPost(Constants.Routes.TextFormatRoute,
             async (string orgId, CreateFormatDto format, CancellationToken token, IFormatService formatService) =>
-                Results.Ok(await formatService.CreateAsync(orgId, format, token).ConfigureAwait(false)));
+                Results.Created(new Uri("about:blank"),
+                    await formatService.CreateAsync(orgId, format, token).ConfigureAwait(false)));
 
         app.MapPut($"{Constants.Routes.TextFormatRoute}/{{id}}",
             async (
@@ -114,7 +116,8 @@ public static class ConfigureServices
         app.MapPost(Constants.Routes.RuleRoute,
             async (string orgId, string formatId, CreateRuleDto rule, CancellationToken token,
                     IRuleService ruleService) =>
-                Results.Ok(await ruleService.CreateAsync(orgId, formatId, rule, token).ConfigureAwait(false)));
+                Results.Created(new Uri("about:blank"),
+                    await ruleService.CreateAsync(orgId, formatId, rule, token).ConfigureAwait(false)));
 
         app.MapPost($"{Constants.Routes.RuleRoute}/apply",
             async (string orgId, string formatId, ApplyRuleDto rule, CancellationToken token,
