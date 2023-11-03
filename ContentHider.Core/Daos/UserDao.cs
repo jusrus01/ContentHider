@@ -1,14 +1,9 @@
-using ContentHider.Core.Daos;
-using ContentHider.Core.Enums;
+using Microsoft.AspNetCore.Identity;
 
-namespace ContentHider.Core.Entities;
+namespace ContentHider.Core.Daos;
 
-public class UserDao : Dao
+public class UserDao : IdentityUser
 {
-    public string? Id { get; init; }
-    public string? FirstName { get; init; }
-    public string? LastName { get; init; }
-    public string? UserName { get; init; }
-    public string? Password { get; set; }
-    public Roles Role { get; init; }
+    public string? RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
 }

@@ -18,12 +18,25 @@ public class CallerAccessor : ICallerAccessor
     {
         get
         {
-            if (!_accessor.HttpContext.Request.Headers.TryGetValue("User-Id", out var userId))
+            var exception = new HttpException(null, "No user associated with the request", HttpStatusCode.Forbidden);
+
+            if (_accessor.HttpContext.User == null)
             {
-                throw new HttpException(null, "No user associated with the request", HttpStatusCode.Forbidden);
+                throw exception;
             }
 
-            return userId;
+            if (_accessor.HttpContext.User.Claims == null)
+            {
+                throw exception;
+            }
+
+            var id = _accessor.HttpContext.User.Claims.SingleOrDefault(p => p.Type == "uid");
+            if (id == null)
+            {
+                throw exception;
+            }
+
+            return id.Value;
         }
     }
 }

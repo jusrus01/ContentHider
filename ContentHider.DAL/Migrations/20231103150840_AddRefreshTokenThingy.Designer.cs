@@ -3,6 +3,7 @@ using System;
 using ContentHider.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContentHider.DAL.Migrations
 {
     [DbContext(typeof(HiderDbContext))]
-    partial class HiderDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231103150840_AddRefreshTokenThingy")]
+    partial class AddRefreshTokenThingy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
