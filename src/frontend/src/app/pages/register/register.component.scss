@@ -1,0 +1,16 @@
+.register-container mat-form-field+mat-form-field {
+  margin-left: 8px;
+}
+
+.register-right-align {
+  text-align: right;
+}
+
+input.register-right-align::-webkit-outer-spin-button,
+input.register-right-align::-webkit-inner-spin-button {
+  display: none;
+}
+
+input.register-right-align {
+  -moz-appearance: textfield;
+}

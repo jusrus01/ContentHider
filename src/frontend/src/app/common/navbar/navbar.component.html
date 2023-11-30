@@ -1,0 +1,57 @@
+<nav class="top-0 sticky flex flex-wrap items-center justify-between px-2 py-3 bg-default-red">
+    <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
+        <div class="w-full relative flex justify-between lg:w-auto px-4 lg:static lg:block lg:justify-start">
+            <a class="cursor-pointer text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white"
+                (mousedown)="routing.goToOrganizations()">
+                Content Hider
+            </a>
+            <button
+                class="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+                type="button" (click)="toggleNavbar()" (blur)="toggleNavbar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div [ngClass]="{'hidden': !showMenu, 'flex': showMenu}" class="lg:flex lg:flex-grow items-center">
+            <ul class="invisible lg:visible lg:w-auto w-0 lg:ml-0 flex flex-col lg:flex-row list-none ml-auto">
+                <!-- Navigation items for the right side -->
+                <li class="nav-item">
+                    <a *showForAuthenticatedUser
+                        class="cursor-pointer px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                        (mousedown)="routing.goToOrganizations()">
+                        Organizations
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="flex flex-col lg:flex-row list-none ml-auto">
+                <!-- Navigation items for the right side and dropdown menu-->
+                <!-- <li class="nav-item">
+                    <a *showForGuestUser
+                        class="cursor-pointer px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                        (mousedown)="routing.goToRegister()">
+                        Register
+                    </a>
+                </li> -->
+                <li class="visible lg:invisible">
+                    <a class="cursor-pointer px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                        (mousedown)="routing.goToOrganizations()">
+                        Organizations
+                    </a>
+                </li>
+
+                <li *showForGuestUser class="nav-item">
+                    <a class="cursor-pointer px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                        (mousedown)="routing.goToLogin()">
+                        Login
+                    </a>
+                </li>
+                <li *showForAuthenticatedUser class="nav-item">
+                    <a class="cursor-pointer px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                        (mousedown)="logout()">
+                        <i class="text-lg fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

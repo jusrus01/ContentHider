@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Apply defined rules for format!</h1>
+<div mat-dialog-content>
+    <div class="mt-2">
+        <mat-form-field class="w-full">
+            <mat-label>Input</mat-label>
+            <textarea matInput #input></textarea>
+        </mat-form-field>
+    </div>
+    <div class="mt-2 text-ellipsis overflow-hidden">
+        <h2 class="text-white">Text should follow this pattern</h2>
+        <p class="text-ellipsis">{{ data.preview }}</p>
+    </div>
+    <div class="mt-2">
+        <mat-form-field class="w-full">
+            <mat-label>Output</mat-label>
+            <textarea matInput #outputArea value="{{output}}"></textarea>
+        </mat-form-field>
+    </div>
+
+    <button mat-raised-button color="primary" class="w-full mt-2 bg-default-red"
+        (click)="apply(input.value, outputArea)">Apply</button>
+</div>

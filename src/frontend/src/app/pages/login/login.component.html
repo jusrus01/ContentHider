@@ -1,0 +1,27 @@
+<div class="flex items-center justify-center h-screen">
+    <form class="login-container" [formGroup]="loginForm">
+        <h2 class="text-center text-5xl font-bold">Log in</h2>
+        <div class="text-center mt-2">
+            <span class="text-center">Don't have an account?</span>
+            <span class="cursor-pointer pl-1" (click)="redirectToSignUp()">Sign up</span>
+        </div>
+        <mat-form-field appearance="fill" class="w-full mt-2">
+            <mat-label>Enter your email</mat-label>
+            <input formControlName="email" type="email" matInput>
+        </mat-form-field>
+        <div>
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Enter your password</mat-label>
+                <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'">
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+        <div class="w-full">
+            <button class="mx-auto w-full bg-default-red" mat-raised-button color="primary"
+                (click)="login()">Login</button>
+        </div>
+    </form>
+</div>

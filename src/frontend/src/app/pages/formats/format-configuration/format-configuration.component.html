@@ -1,0 +1,42 @@
+<div class="mt-16">
+    <div class="w-full bg-default flex items-center justify-center py-16 -mt-1 bg-default-red">
+        <span class="text-white text-3xl sm:text-6xl font-bold">FORMAT</span>
+    </div>
+
+    <div class="w-full flex justify-center mt-3">
+        <div class="w-full lg:w-2/3">
+        </div>
+    </div>
+
+    <div class="w-full flex justify-center mt-6" *ngIf="format" [formGroup]="form">
+        <div class="w-full lg:w-2/3 dim-gray-border bg-for-white-text">
+            <div class="flex items-center w-full px-3 pt-3">
+                <mat-form-field class="mt-3 w-full text-4xl">
+                    <mat-label>Title</mat-label>
+                    <input formControlName="title" matInput value="{{format.title}}">
+                </mat-form-field>
+            </div>
+
+            <div class="flex items-center w-full px-3">
+                <mat-radio-group formControlName="type" aria-label="Select an option">
+                    <mat-radio-button value="0" checked="{{format.type == 0}}">JSON</mat-radio-button>
+                    <mat-radio-button value="1" checked="{{format.type == 1}}">XML</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <mat-form-field class="mt-3 w-full text-white px-3">
+                <mat-label>Definition</mat-label>
+                <textarea matInput formControlName="formatDefinition" value="{{format.formatDefinition}}"></textarea>
+            </mat-form-field>
+
+            <div class="mt-2 w-full dim-gray-border"></div>
+
+            <div class="flex justify-center align-middle w-full">
+                <button mat-raised-button color="primary" class="w-full m-2 bg-default-red"
+                    (click)="updateFormat()">Confirm</button>
+                <button mat-raised-button color="accent" class="w-full m-2"
+                    [routerLink]="['/organizations', format.organizationId, 'formats', format.id]">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="mt-16">
+    <div class="w-full bg-default flex items-center justify-center py-16 -mt-1 bg-default-red">
+        <span class="text-white text-3xl sm:text-6xl font-bold">ORGANIZATIONS</span>
+    </div>
+    <div class="w-full flex justify-center mt-3">
+        <div class="w-full lg:w-2/3">
+            <button *showForAdminUser class="mt-2 bg-default-red" [routerLink]="'/organizations/create'"
+                mat-raised-button color="primary">
+                Create a new organization!
+            </button>
+        </div>
+    </div>
+
+    <div class="w-full flex justify-center mt-3">
+        <div class="w-full lg:w-2/3">
+            <div *ngFor="let organization of organizations"
+                class="mb-3 cursor-pointer hover:bg-neutral-800 hover:scale-105 transform transition duration-500 bg-for-white-text">
+                <div class="flex shadow-md" [routerLink]="['/organizations', organization.id]">
+                    <app-image #profileImage class="pr-3" [imageClass]="'object-cover rounded-md'"
+                        [containerClass]="'h-24 w-24 rounded-full'" [imageId]="organization.imageId"
+                        [imageSource]="getRandomImageUrl()">
+                    </app-image>
+                    <div>
+                        <div matListItemTitle class="font-bold text-lg text-white">
+                            {{ organization.title }}
+                        </div>
+                        <div matListItemLine class="text-dim-gray">
+                            Description: {{ organization.description }}
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="w-full flex justify-end">
+                    <app-resource-delete-common *showForAdminUser class="mr-2 mb-2"
+                        [resourceDeleteFunc]="createResourceDeleteFunc(organization)"></app-resource-delete-common>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>

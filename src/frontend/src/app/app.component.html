@@ -1,0 +1,11 @@
+<div class="relative h-full">
+    <app-navbar class="fixed top-0 left-0 right-0 z-50"></app-navbar>
+    <div class="overflow-y-auto overflow-x-hidden pb-10 h-full">
+        <router-outlet></router-outlet>
+    </div>
+    <div class="relative">
+        <div class="absolute bg-default-red w-full bottom-0">
+            <p class="text-center p-3 text-gray-200">{{footerText}}</p>
+        </div>
+    </div>
+</div>

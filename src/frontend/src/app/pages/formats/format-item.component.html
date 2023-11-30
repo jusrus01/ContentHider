@@ -1,0 +1,103 @@
+<div class="mt-16">
+    <div class="w-full bg-default flex items-center justify-center py-16 -mt-1 bg-default-red">
+        <span class="text-white text-3xl sm:text-6xl font-bold">FORMAT</span>
+    </div>
+
+    <div class="w-full flex justify-center mt-3">
+        <div class="w-full lg:w-2/3">
+            <!-- <button *showForAuthenticatedUser class="mt-2" mat-raised-button color="primary"
+                (click)="routing.goToTournamentCreate()">
+                Create a new organization!
+            </button> -->
+        </div>
+    </div>
+
+    <div class="w-full flex justify-center mt-3" *ngIf="format">
+        <div class="w-full lg:w-2/3 dim-gray-border bg-for-white-text">
+            <div class="flex items-center w-full">
+                <h1 class="ml-5 mt-3 text-white text-4xl w-full">{{ format.title }}</h1>
+
+                <button *showForAdminUser mat-button [matMenuTriggerFor]="menu"><i
+                        class="fa-solid fa-gear"></i></button>
+                <mat-menu #menu="matMenu">
+                    <!-- TODO: fix -->
+                    <button mat-menu-item
+                        [routerLink]="['/organizations', format.organizationId, 'formats', format.id, 'edit']">Edit</button>
+                    <div mat-menu-item *showForAdminUser>
+                        <app-resource-delete-common [resourceDeleteFunc]="getDeleteFunc()"></app-resource-delete-common>
+                    </div>
+                </mat-menu>
+            </div>
+
+            <p class="ml-5 mt-3 text-dim-gray">Type: {{getTypeName(format)}}</p>
+            <p class="ml-5 mt-3 text-dim-gray">Format definition: {{format.formatDefinition}}</p>
+
+            <div class="p-3">
+                <div class="flex justify-between">
+                    <h3 class="text-white font-bold mt-2">Rules</h3>
+
+                    <button *showForAdminUser mat-raised-button color="accent" class="my-auto mr-4"
+                        (click)="configureRules()">
+                        {{ !isConfiguring() ? "Configure rule" : "Cancel" }}
+                    </button>
+                </div>
+
+                <div class="mx-4" [formGroup]="_rulesConfig" *ngIf="isConfiguring()">
+                    <div class="w-full">
+                        <mat-form-field class="mt-3 w-full">
+                            <mat-label>Title</mat-label>
+                            <input formControlName="title" matInput>
+                        </mat-form-field>
+                        <mat-form-field class="mt-3 w-full text-white">
+                            <mat-label>Anonymized field</mat-label>
+                            <input formControlName="anonymizedField" matInput>
+                        </mat-form-field>
+                        <button mat-raised-button color="primary" class="mb-6 w-full bg-default-red"
+                            (click)="confirmRuleConfiguration()">
+                            Create
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="format.rules.length === 0">
+                    No rules configured yet
+                </div>
+
+                <div *ngIf="format.rules.length > 0">
+                    <table class="hidden table-auto w-full dim-gray-border mt-2 lg:table">
+                        <thead>
+                            <tr class="bg-zinc-800">
+                                <th>Title</th>
+                                <th>Anonymized field</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr [matMenuTriggerFor]="menu2" (click)="markAsSelected(rule)"
+                                *ngFor="let rule of format.rules"
+                                class="hover:scale-105 transform transition duration-500 hover:bg-neutral-800 cursor-pointer">
+                                <td>{{ rule.title }}</td>
+                                <td>{{ rule.anonymizedField }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="lg:hidden">
+                        <div class="dim-gray-border cursor-pointer" (click)="markAsSelected(rule)"
+                            [matMenuTriggerFor]="menu2" *ngFor="let rule of format.rules">
+                            <p>Title: {{ rule.title }}</p>
+                            <p>Description: {{ rule.anonymizedField }}</p>
+                        </div>
+                    </div>
+
+                    <mat-menu #menu2="matMenu" xPosition="before">
+                        <button mat-menu-item *showForAdminUser (click)="goToLatestSelectedRule()">Edit</button>
+                        <div mat-menu-item *showForAdminUser>
+                            <app-resource-delete-common
+                                [resourceDeleteFunc]="getLatestDeleteRuleFunc()"></app-resource-delete-common>
+                        </div>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

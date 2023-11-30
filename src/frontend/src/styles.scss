@@ -1,0 +1,70 @@
+@use "@angular/material/prebuilt-themes/pink-bluegrey.css";
+
+:root {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+html,
+body {
+    height: 100%;
+    // @apply text-slate-700;
+    color: #fff;
+    @apply bg-default;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-default {
+    background-color: #303030 !important;
+}
+
+.bg-default-red {
+    background-color: #ef8f10 !important;
+}
+
+.bg-for-white-text {
+    background-color: #424242;
+}
+
+.text-dim-gray {
+    color: #ffffffb3 !important;
+}
+
+.dim-gray-border {
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 4px;
+}
+
+.mat-mdc-snack-bar-container {
+    &.blue-snackbar {
+        --mdc-snackbar-container-color: #3f51b5;
+        --mat-mdc-snack-bar-button-color: #fff;
+        --mdc-snackbar-supporting-text-color: #fff;
+    }
+
+    &.blue-snackbar-error {
+        --mdc-snackbar-container-color: #3f51b5;
+        --mat-mdc-snack-bar-button-color: #fff;
+        --mdc-snackbar-supporting-text-color: pink;
+    }
+
+    &.red-snackbar {
+        --mdc-snackbar-container-color: #e9a21e;
+        --mat-mdc-snack-bar-button-color: #fff;
+        --mdc-snackbar-supporting-text-color: #fff;
+    }
+
+    &.red-snackbar-error {
+        --mdc-snackbar-container-color: #e9a21e;
+        --mat-mdc-snack-bar-button-color: #fff;
+        --mdc-snackbar-supporting-text-color: rgb(247, 237, 239);
+    }
+}
